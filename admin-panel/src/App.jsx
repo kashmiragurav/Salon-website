@@ -10,6 +10,7 @@ import Services from "./pages/Services";
 import Gallery from "./pages/Gallery";
 import Testimonials from "./pages/Testimonials";
 import Appointments from "./pages/Appointments";
+import Enquiries from "./pages/Enquiries";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -71,7 +72,7 @@ function App() {
 
         <Route
           path="/enquiries"
-          element={<ModulePlaceholder title="Enquiries" />}
+          element={<Enquiries />}
         />
 
         <Route
