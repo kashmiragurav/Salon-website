@@ -1,45 +1,26 @@
-import { useNavigate } from "react-router-dom";
-
-import { useAuth } from "../context/AuthContext";
-
-import { logoutAdmin } from "../services/authServices";
+import { useAuth } from "../hooks/useAuth";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 
 function Dashboard() {
   const { admin } = useAuth();
 
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logoutAdmin();
-
-    navigate("/login");
-  };
-
   return (
-    <div className="min-h-screen p-10 bg-gray-100">
-
-      <div className="bg-white rounded-xl p-8 shadow">
-
-        <h1 className="text-3xl font-bold">
-          Admin Dashboard
-        </h1>
-
-        <p className="mt-3">
-          Welcome, {admin?.email}
-        </p>
-
-        <div className="mt-8 p-5 bg-green-50 rounded-lg">
-          Firebase admin authentication is working.
+    <div className="dashboard-page">
+      <section className="dashboard-welcome">
+        <div className="dashboard-welcome__content">
+          <span className="welcome-icon"><Sparkles size={20} /></span>
+          <p className="eyebrow">Good to see you</p>
+          <h1>Welcome back{admin?.email ? "," : ""}</h1>
+          {admin?.email && <p className="welcome-email">{admin.email}</p>}
+          <p className="welcome-copy">Your salon workspace is ready for the next chapter.</p>
         </div>
-
-        <button
-          onClick={handleLogout}
-          className="mt-6 bg-black text-white px-6 py-3 rounded-lg"
-        >
-          Logout
-        </button>
-
-      </div>
+        <ArrowUpRight className="welcome-arrow" size={28} aria-hidden="true" />
+      </section>
+      <section className="dashboard-note">
+        <p className="eyebrow">Your workspace</p>
+        <h2>Choose a module from the navigation to begin.</h2>
+        <p>Management tools will appear here as each module is brought online.</p>
+      </section>
 
     </div>
   );

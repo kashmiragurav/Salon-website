@@ -10,7 +10,58 @@ html {
 
 body {
   margin: 0;
-  font-family: Inter, Arial, sans-serif;
-  background: #f5f5f5;
-  color: #171717;
+  font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+  background: #f5f2ee;
+  color: #272421;
 }
+
+button, a { font: inherit; }
+.admin-shell { min-height: 100vh; background: #f5f2ee; }
+.admin-shell__body { display: flex; min-height: 100vh; }
+.admin-shell__content { display: flex; min-width: 0; flex: 1; flex-direction: column; }
+.admin-sidebar { position: fixed; inset: 0 auto 0 0; z-index: 40; display: flex; width: 272px; flex-direction: column; background: #24211f; color: #f8f4ef; transition: transform .2s ease; }
+.sidebar-brand { display: flex; align-items: center; justify-content: space-between; min-height: 112px; padding: 24px 22px; border-bottom: 1px solid rgba(255,255,255,.09); }
+.brand-lockup { display: flex; align-items: center; gap: 8px; color: #dfb77b; font-size: 11px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; }
+.sidebar-brand h1 { margin: 9px 0 0; color: white; font-family: Georgia, serif; font-size: 20px; font-weight: 500; }
+.icon-button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(43,36,31,.14); background: transparent; cursor: pointer; }
+.sidebar-close { display: none; width: 36px; height: 36px; border-color: rgba(255,255,255,.12); color: #d8d0c9; border-radius: 9px; }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 22px 13px; }
+.sidebar-link { display: flex; align-items: center; gap: 13px; margin: 3px 0; padding: 12px 13px; border-radius: 9px; color: #bdb6af; font-size: 13px; font-weight: 600; text-decoration: none; transition: background .2s ease, color .2s ease; }
+.sidebar-link:hover { background: rgba(255,255,255,.07); color: white; }
+.sidebar-link.is-active { background: #dfb77b; color: #30251e; }
+.sidebar-footer { margin-top: 18px; padding: 18px 0 0; border-top: 1px solid rgba(255,255,255,.09); }
+.sidebar-logout { display: flex; width: 100%; align-items: center; justify-content: center; gap: 9px; padding: 11px; border: 1px solid rgba(223,183,123,.45); border-radius: 9px; background: transparent; color: #f3d7af; cursor: pointer; font-size: 13px; font-weight: 700; transition: background .2s ease; }
+.sidebar-logout:hover { background: rgba(223,183,123,.12); }
+.sidebar-overlay { position: fixed; inset: 0; z-index: 30; border: 0; background: rgba(27,24,22,.55); }
+.admin-topbar { position: sticky; top: 0; z-index: 20; border-bottom: 1px solid #e2d9d0; background: rgba(255,252,249,.9); backdrop-filter: blur(12px); }
+.admin-topbar__inner { display: flex; min-height: 82px; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 4vw; }
+.topbar-heading { display: flex; align-items: center; gap: 14px; }
+.menu-button { display: none; width: 42px; height: 42px; border-radius: 9px; color: #302c29; }
+.eyebrow { margin: 0; color: #8c8178; font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.topbar-heading h2 { margin: 5px 0 0; color: #28231f; font-family: Georgia, serif; font-size: 27px; font-weight: 500; }
+.topbar-user { display: flex; align-items: center; gap: 10px; padding: 5px 11px 5px 5px; border: 1px solid #e2d9d0; border-radius: 999px; background: #fffaf6; }
+.topbar-avatar { display: flex; width: 35px; height: 35px; align-items: center; justify-content: center; border-radius: 50%; background: #6e3c38; color: white; font-family: Georgia, serif; font-size: 17px; }
+.topbar-user__details p:last-child { max-width: 240px; margin: 3px 0 0; overflow: hidden; color: #4c443e; font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.topbar-check { color: #6e3c38; }
+.admin-main { flex: 1; padding: 30px 4vw 50px; }
+.admin-main__inner { width: 100%; max-width: 1180px; margin: 0 auto; }
+.auth-loading { display: flex; min-height: 100vh; align-items: center; justify-content: center; background: #f5f2ee; }
+.auth-loading__panel { display: flex; align-items: center; gap: 12px; padding: 18px 22px; border: 1px solid #e2d9d0; border-radius: 12px; background: #fffaf6; color: #5e554d; font-size: 13px; }
+.loading-mark { width: 12px; height: 12px; border: 2px solid #ddc39e; border-top-color: #6e3c38; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.dashboard-page { display: grid; gap: 22px; }
+.dashboard-welcome, .dashboard-note { border: 1px solid #e2d9d0; border-radius: 14px; background: #fffaf6; }
+.dashboard-welcome { position: relative; min-height: 265px; overflow: hidden; padding: 38px; background: linear-gradient(120deg, #fffaf6 0%, #f1e2d2 100%); }
+.dashboard-welcome::after { position: absolute; right: -60px; bottom: -95px; width: 290px; height: 290px; border: 1px solid rgba(110,60,56,.18); border-radius: 50%; content: ""; }
+.dashboard-welcome__content { position: relative; z-index: 1; max-width: 560px; }
+.welcome-icon { display: inline-flex; width: 42px; height: 42px; align-items: center; justify-content: center; margin-bottom: 28px; border-radius: 50%; background: #6e3c38; color: #f4d9b5; }
+.dashboard-welcome h1 { margin: 8px 0 0; color: #342722; font-family: Georgia, serif; font-size: clamp(34px, 5vw, 58px); font-weight: 400; line-height: 1.05; }
+.welcome-email { margin: 8px 0 0; color: #6e3c38; font-size: 14px; font-weight: 700; }
+.welcome-copy { margin: 19px 0 0; color: #776b62; font-size: 15px; }
+.welcome-arrow { position: absolute; top: 34px; right: 34px; color: #6e3c38; }
+.dashboard-note { padding: 27px 30px; }
+.dashboard-note h2 { margin: 8px 0 0; color: #342d28; font-family: Georgia, serif; font-size: 23px; font-weight: 500; }
+.dashboard-note p:last-child { margin: 8px 0 0; color: #83786f; font-size: 14px; }
+@media (min-width: 1024px) { .admin-sidebar { position: sticky; } }
+@media (max-width: 1023px) { .admin-sidebar { transform: translateX(-100%); } .admin-sidebar.is-open { transform: translateX(0); } .sidebar-close, .menu-button { display: inline-flex; } }
+@media (max-width: 600px) { .admin-topbar__inner { min-height: 72px; padding: 13px 18px; } .topbar-heading h2 { font-size: 23px; } .topbar-user__details, .topbar-check { display: none; } .topbar-user { padding-right: 5px; } .admin-main { padding: 20px 18px 35px; } .dashboard-welcome { min-height: 330px; padding: 28px 24px; } .dashboard-welcome h1 { font-size: 40px; } .welcome-arrow { top: 25px; right: 23px; } }
