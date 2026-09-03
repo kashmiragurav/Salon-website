@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Services from "./pages/Services";
 import Gallery from "./pages/Gallery";
+import Testimonials from "./pages/Testimonials";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -64,7 +65,7 @@ function App() {
 
         <Route
           path="/testimonials"
-          element={<ModulePlaceholder title="Testimonials" />}
+          element={<Testimonials />}
         />
 
         <Route
