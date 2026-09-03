@@ -1,6 +1,7 @@
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 
 import { db } from "../firebase/config";
+import { createAuditLog } from "./auditService";
 
 const settingsReference = doc(db, "settings", "salon");
 
@@ -9,7 +10,9 @@ export const getSalonSettings = async () => {
   return snapshot.exists() ? snapshot.data() : null;
 };
 
-export const saveSalonSettings = async (settings) => setDoc(settingsReference, {
+export const saveSalonSettings = async (settings) => {
+  const existingSettings = await getDoc(settingsReference);
+  const result = await setDoc(settingsReference, {
   salonName: settings.salonName.trim(),
   address: settings.address.trim(),
   phone: settings.phone.trim(),
@@ -26,4 +29,7 @@ export const saveSalonSettings = async (settings) => setDoc(settingsReference, {
   clientsServed: Number(settings.clientsServed),
   staffCount: Number(settings.staffCount),
   updatedAt: serverTimestamp(),
-}, { merge: true });
+  }, { merge: true });
+  void createAuditLog({ action: existingSettings.exists() ? "UPDATE" : "CREATE", module: "Settings", recordId: "salon", description: `${existingSettings.exists() ? "Updated" : "Created"} salon settings.` }).catch(console.error);
+  return result;
+};

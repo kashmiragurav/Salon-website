@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "../firebase/config";
+import { createAuditLog } from "./auditService";
 
 const servicesCollection = collection(db, "services");
 
@@ -25,7 +26,7 @@ export const subscribeToServices = (onData, onError) => {
 };
 
 export const createService = async (service) => {
-  return addDoc(servicesCollection, {
+  const reference = await addDoc(servicesCollection, {
     name: service.name.trim(),
     category: service.category,
     description: service.description.trim(),
@@ -36,10 +37,12 @@ export const createService = async (service) => {
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+  void createAuditLog({ action: "CREATE", module: "Services", recordId: reference.id, description: `Created service ${service.name.trim()}.` }).catch(console.error);
+  return reference;
 };
 
 export const updateService = async (serviceId, service) => {
-  return updateDoc(doc(db, "services", serviceId), {
+  const result = await updateDoc(doc(db, "services", serviceId), {
     name: service.name.trim(),
     category: service.category,
     description: service.description.trim(),
@@ -48,13 +51,21 @@ export const updateService = async (serviceId, service) => {
     imageUrl: service.imageUrl.trim(),
     updatedAt: serverTimestamp(),
   });
+  void createAuditLog({ action: "UPDATE", module: "Services", recordId: serviceId, description: `Updated service ${service.name.trim()}.` }).catch(console.error);
+  return result;
 };
 
-export const deleteService = async (serviceId) => deleteDoc(doc(db, "services", serviceId));
+export const deleteService = async (serviceId) => {
+  const result = await deleteDoc(doc(db, "services", serviceId));
+  void createAuditLog({ action: "DELETE", module: "Services", recordId: serviceId, description: "Deleted a service." }).catch(console.error);
+  return result;
+};
 
 export const setServiceActive = async (serviceId, isActive) => {
-  return updateDoc(doc(db, "services", serviceId), {
+  const result = await updateDoc(doc(db, "services", serviceId), {
     isActive,
     updatedAt: serverTimestamp(),
   });
+  void createAuditLog({ action: "STATUS_CHANGE", module: "Services", recordId: serviceId, description: `Changed service status to ${isActive ? "active" : "inactive"}.` }).catch(console.error);
+  return result;
 };

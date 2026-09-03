@@ -16,6 +16,7 @@ import {
 } from "firebase/storage";
 
 import { db, storage } from "../firebase/config";
+import { createAuditLog } from "./auditService";
 
 const galleryCollection = collection(db, "gallery");
 const maximumImageSize = 10 * 1024 * 1024;
@@ -52,13 +53,15 @@ export const addGalleryImage = async ({ file, category, caption }) => {
   const imageUrl = await getDownloadURL(imageRef);
 
   try {
-    return await addDoc(galleryCollection, {
+    const reference = await addDoc(galleryCollection, {
       imageUrl,
       storagePath,
       category: category.trim(),
       caption: caption.trim(),
       uploadedAt: serverTimestamp(),
     });
+    void createAuditLog({ action: "CREATE", module: "Gallery", recordId: reference.id, description: `Added gallery image${category ? ` in ${category}` : ""}.` }).catch(console.error);
+    return reference;
   } catch (error) {
     await deleteObject(imageRef).catch(() => undefined);
     throw error;
@@ -77,4 +80,5 @@ export const deleteGalleryImage = async (image) => {
   }
 
   await deleteDoc(doc(db, "gallery", image.id));
+  void createAuditLog({ action: "DELETE", module: "Gallery", recordId: image.id, description: "Deleted a gallery image." }).catch(console.error);
 };

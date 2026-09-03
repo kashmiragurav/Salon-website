@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "../firebase/config";
+import { createAuditLog } from "./auditService";
 
 const enquiriesCollection = collection(db, "enquiries");
 const validStatuses = ["NEW", "READ", "RESPONDED", "CLOSED"];
@@ -27,8 +28,10 @@ export const subscribeToEnquiries = (onData, onError) => {
 export const updateEnquiryStatus = async (enquiryId, status) => {
   if (!validStatuses.includes(status)) throw new Error("Invalid enquiry status.");
 
-  return updateDoc(doc(db, "enquiries", enquiryId), {
+  const result = await updateDoc(doc(db, "enquiries", enquiryId), {
     status,
     updatedAt: serverTimestamp(),
   });
+  void createAuditLog({ action: "STATUS_CHANGE", module: "Enquiries", recordId: enquiryId, description: `Changed enquiry status to ${status}.` }).catch(console.error);
+  return result;
 };

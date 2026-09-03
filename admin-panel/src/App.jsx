@@ -12,6 +12,7 @@ import Testimonials from "./pages/Testimonials";
 import Appointments from "./pages/Appointments";
 import Enquiries from "./pages/Enquiries";
 import Settings from "./pages/Settings";
+import AuditHistory from "./pages/AuditHistory";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -88,7 +89,7 @@ function App() {
 
         <Route
           path="/audit-history"
-          element={<ModulePlaceholder title="Audit History" />}
+          element={<AuditHistory />}
         />
 
         <Route
