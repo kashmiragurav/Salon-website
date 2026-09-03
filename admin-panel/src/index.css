@@ -58,10 +58,46 @@ button, a { font: inherit; }
 .dashboard-welcome h1 { margin: 8px 0 0; color: #342722; font-family: Georgia, serif; font-size: clamp(34px, 5vw, 58px); font-weight: 400; line-height: 1.05; }
 .welcome-email { margin: 8px 0 0; color: #6e3c38; font-size: 14px; font-weight: 700; }
 .welcome-copy { margin: 19px 0 0; color: #776b62; font-size: 15px; }
-.welcome-arrow { position: absolute; top: 34px; right: 34px; color: #6e3c38; }
-.dashboard-note { padding: 27px 30px; }
-.dashboard-note h2 { margin: 8px 0 0; color: #342d28; font-family: Georgia, serif; font-size: 23px; font-weight: 500; }
-.dashboard-note p:last-child { margin: 8px 0 0; color: #83786f; font-size: 14px; }
+.dashboard-refresh { position: absolute; top: 30px; right: 30px; z-index: 2; display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid rgba(110,60,56,.22); border-radius: 8px; background: rgba(255,250,246,.7); color: #6e3c38; cursor: pointer; font-size: 12px; font-weight: 700; }
+.dashboard-refresh:disabled { cursor: wait; opacity: .65; }
+.is-spinning { animation: spin .8s linear infinite; }
+.dashboard-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.dashboard-stat { min-height: 142px; padding: 20px; border: 1px solid #e2d9d0; border-radius: 14px; background: #fffaf6; }
+.dashboard-stat__topline { display: flex; align-items: center; gap: 10px; }
+.dashboard-stat__icon { display: inline-flex; width: 34px; height: 34px; align-items: center; justify-content: center; border-radius: 9px; }
+.dashboard-stat__label { color: #71665d; font-size: 12px; font-weight: 700; }
+.dashboard-stat strong { display: block; margin-top: 20px; color: #302925; font-family: Georgia, serif; font-size: 34px; font-weight: 500; }
+.dashboard-stat--wine .dashboard-stat__icon { background: #f0ddda; color: #6e3c38; }
+.dashboard-stat--gold .dashboard-stat__icon { background: #f3e8ca; color: #9a722d; }
+.dashboard-stat--sage .dashboard-stat__icon { background: #dce8df; color: #477058; }
+.dashboard-stat--plum .dashboard-stat__icon { background: #e8dce8; color: #704f70; }
+.dashboard-stat__loading { display: block; width: 42px; height: 35px; margin-top: 20px; border-radius: 5px; background: #eee5de; animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .45; } }
+.dashboard-bookings { overflow: hidden; border: 1px solid #e2d9d0; border-radius: 14px; background: #fffaf6; }
+.dashboard-section-heading { display: flex; align-items: center; justify-content: space-between; padding: 23px 25px; border-bottom: 1px solid #e9e0d8; color: #6e3c38; }
+.dashboard-section-heading h2 { margin: 6px 0 0; color: #342d28; font-family: Georgia, serif; font-size: 23px; font-weight: 500; }
+.dashboard-loading { display: flex; min-height: 180px; align-items: center; justify-content: center; gap: 11px; color: #877b71; font-size: 13px; }
+.dashboard-empty { padding: 44px 20px; text-align: center; }
+.dashboard-empty__icon { display: inline-flex; width: 46px; height: 46px; align-items: center; justify-content: center; border-radius: 50%; background: #f0e4d9; color: #6e3c38; }
+.dashboard-empty h3 { margin: 13px 0 0; color: #443932; font-family: Georgia, serif; font-size: 20px; font-weight: 500; }
+.dashboard-empty p { margin: 7px 0 0; color: #8a7e75; font-size: 13px; }
+.dashboard-error { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 17px; border: 1px solid #e7c6c1; border-radius: 10px; background: #fff2f0; color: #7b3d37; font-size: 13px; }
+.dashboard-error p { margin: 0; }
+.dashboard-error button { padding: 8px 11px; border: 1px solid #c98e87; border-radius: 7px; background: transparent; color: #7b3d37; cursor: pointer; font-size: 12px; font-weight: 700; }
+.bookings-table-wrap { overflow-x: auto; }
+.bookings-table { width: 100%; border-collapse: collapse; min-width: 680px; }
+.bookings-table th { padding: 12px 25px; background: #fcf5ef; color: #9a8d83; font-size: 10px; font-weight: 700; letter-spacing: .13em; text-align: left; text-transform: uppercase; }
+.bookings-table td { padding: 17px 25px; border-top: 1px solid #f0e8e1; color: #645951; font-size: 13px; white-space: nowrap; }
+.bookings-table tbody tr:hover { background: #fdf8f4; }
+.customer-name, .customer-email { display: block; }
+.customer-name { color: #39302b; font-weight: 700; }
+.customer-email { margin-top: 4px; color: #9a8e85; font-size: 11px; }
+.status-badge { display: inline-flex; padding: 5px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+.status-badge--pending { background: #fff0c9; color: #8e681e; }
+.status-badge--confirmed { background: #dceee2; color: #37704a; }
+.status-badge--cancelled { background: #f5dcda; color: #944942; }
+.bookings-mobile-hint { display: none; padding: 12px 18px; color: #968980; font-size: 11px; }
 @media (min-width: 1024px) { .admin-sidebar { position: sticky; } }
 @media (max-width: 1023px) { .admin-sidebar { transform: translateX(-100%); } .admin-sidebar.is-open { transform: translateX(0); } .sidebar-close, .menu-button { display: inline-flex; } }
-@media (max-width: 600px) { .admin-topbar__inner { min-height: 72px; padding: 13px 18px; } .topbar-heading h2 { font-size: 23px; } .topbar-user__details, .topbar-check { display: none; } .topbar-user { padding-right: 5px; } .admin-main { padding: 20px 18px 35px; } .dashboard-welcome { min-height: 330px; padding: 28px 24px; } .dashboard-welcome h1 { font-size: 40px; } .welcome-arrow { top: 25px; right: 23px; } }
+@media (max-width: 900px) { .dashboard-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .admin-topbar__inner { min-height: 72px; padding: 13px 18px; } .topbar-heading h2 { font-size: 23px; } .topbar-user__details, .topbar-check { display: none; } .topbar-user { padding-right: 5px; } .admin-main { padding: 20px 18px 35px; } .dashboard-welcome { min-height: 330px; padding: 28px 24px; } .dashboard-welcome h1 { font-size: 40px; } .dashboard-refresh { top: 22px; right: 21px; } .dashboard-welcome__content { padding-top: 32px; } .dashboard-stats { grid-template-columns: 1fr 1fr; gap: 10px; } .dashboard-stat { min-height: 125px; padding: 15px; } .dashboard-stat strong { margin-top: 15px; font-size: 29px; } .dashboard-stat__label { font-size: 11px; } .dashboard-section-heading { padding: 20px 18px; } .bookings-mobile-hint { display: flex; align-items: center; gap: 7px; } }
