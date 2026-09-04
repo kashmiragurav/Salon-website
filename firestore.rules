@@ -1,0 +1,112 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/adminUsers/$(request.auth.uid))
+        && get(/databases/$(database)/documents/adminUsers/$(request.auth.uid)).data.role == 'admin'
+        && get(/databases/$(database)/documents/adminUsers/$(request.auth.uid)).data.isActive == true;
+    }
+
+    function hasOnly(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    match /adminUsers/{userId} {
+      allow read: if signedIn() && request.auth.uid == userId;
+      allow create: if isAdmin();
+      allow update: if isAdmin()
+        && (request.auth.uid != userId
+          || (request.resource.data.role == resource.data.role
+            && request.resource.data.isActive == resource.data.isActive));
+      allow delete: if isAdmin() && request.auth.uid != userId;
+    }
+
+    match /services/{serviceId} {
+      allow read: if isAdmin() || resource.data.isActive == true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /gallery/{imageId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /testimonials/{testimonialId} {
+      allow read: if isAdmin() || resource.data.isApproved == true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /bookings/{bookingId} {
+      allow create: if !signedIn()
+        && hasOnly(['customerName', 'phone', 'serviceSelected', 'serviceId', 'preferredDate', 'preferredTime', 'notes', 'status', 'createdAt'])
+        && request.resource.data.status == 'Pending'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.customerName is string
+        && request.resource.data.customerName.size() > 0
+        && request.resource.data.customerName.size() <= 120
+        && request.resource.data.phone is string
+        && request.resource.data.phone.size() > 0
+        && request.resource.data.phone.size() <= 40
+        && request.resource.data.serviceSelected is string
+        && request.resource.data.serviceSelected.size() > 0
+        && request.resource.data.serviceSelected.size() <= 160
+        && request.resource.data.serviceId is string
+        && request.resource.data.serviceId.size() > 0
+        && exists(/databases/$(database)/documents/services/$(request.resource.data.serviceId))
+        && get(/databases/$(database)/documents/services/$(request.resource.data.serviceId)).data.isActive == true
+        && request.resource.data.preferredDate is string
+        && request.resource.data.preferredDate.size() > 0
+        && request.resource.data.preferredTime is string
+        && request.resource.data.preferredTime.size() > 0
+        && request.resource.data.notes is string;
+      allow read, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /enquiries/{enquiryId} {
+      allow create: if !signedIn()
+        && hasOnly(['name', 'email', 'phone', 'subject', 'message', 'status', 'createdAt'])
+        && request.resource.data.status == 'NEW'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 120
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 0
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.phone is string
+        && request.resource.data.phone.size() > 0
+        && request.resource.data.phone.size() <= 40
+        && request.resource.data.subject is string
+        && request.resource.data.subject.size() > 0
+        && request.resource.data.subject.size() <= 200
+        && request.resource.data.message is string;
+      allow read, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /settings/{settingId} {
+      allow read: if settingId == 'salon' || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /auditLogs/{auditId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin()
+        && hasOnly(['adminId', 'action', 'module', 'recordId', 'description', 'createdAt'])
+        && request.resource.data.adminId == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

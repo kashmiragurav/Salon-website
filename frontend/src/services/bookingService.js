@@ -17,7 +17,7 @@ export const validateBooking = (booking) => {
   if (!String(booking.customerName || "").trim()) errors.customerName = "Enter your name.";
   if (!phone) errors.phone = "Enter your phone number.";
   else if (!/^[+]?[(]?[0-9\s().-]{7,20}$/.test(phone) || phone.replace(/\D/g, "").length < 7) errors.phone = "Enter a valid phone number.";
-  if (!String(booking.serviceSelected || "").trim()) errors.serviceSelected = "Choose a service.";
+  if (!String(booking.serviceSelected || "").trim() || !String(booking.serviceId || "").trim()) errors.serviceSelected = "Choose a service.";
   if (!booking.preferredDate) errors.preferredDate = "Choose a date.";
   else if (!isExactDate || selectedDate < today) errors.preferredDate = "Choose a current or future date.";
   if (!booking.preferredTime) errors.preferredTime = "Choose a time.";
@@ -29,6 +29,7 @@ export const createBooking = async (booking) => addDoc(collection(db, "bookings"
   customerName: booking.customerName.trim(),
   phone: booking.phone.trim(),
   serviceSelected: booking.serviceSelected.trim(),
+  serviceId: booking.serviceId.trim(),
   preferredDate: booking.preferredDate,
   preferredTime: booking.preferredTime,
   notes: booking.notes.trim(),
