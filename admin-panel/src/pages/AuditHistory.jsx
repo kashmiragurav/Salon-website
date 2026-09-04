@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ClipboardCheck, Clock3, Search, ShieldCheck, X } from "lucide-react";
+import { ClipboardCheck, Clock3, Search, ShieldCheck } from "lucide-react";
 
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner from "../components/LoadingSpinner";

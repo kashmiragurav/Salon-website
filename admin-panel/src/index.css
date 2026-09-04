@@ -254,6 +254,24 @@ button, a { font: inherit; }
 .enquiry-status-button--read.is-current { border-color: #b9a2d0; background: #e8e0f1; color: #654d7e; }
 .enquiry-status-button--responded.is-current { border-color: #a9d0b2; background: #dceee2; color: #37704a; }
 .enquiry-status-button--closed.is-current { border-color: #bdb6af; background: #e6e2de; color: #706860; }
+.audit-page { display: grid; gap: 20px; }
+.audit-notice { display: flex; align-items: flex-start; gap: 9px; padding: 13px 15px; border: 1px solid #d8c9b6; border-radius: 9px; background: #fff8ec; color: #806742; font-size: 12px; line-height: 1.5; }
+.audit-list { min-height: 230px; overflow: hidden; border: 1px solid #e2d9d0; border-radius: 14px; background: #fffaf6; }
+.audit-table-wrap { overflow-x: auto; }
+.audit-table { width: 100%; min-width: 980px; border-collapse: collapse; }
+.audit-table th { padding: 12px 20px; background: #fcf5ef; color: #9a8d83; font-size: 10px; font-weight: 700; letter-spacing: .13em; text-align: left; text-transform: uppercase; }
+.audit-table td { padding: 15px 20px; border-top: 1px solid #f0e8e1; color: #645951; font-size: 12px; vertical-align: middle; }
+.audit-admin, .audit-time { display: flex; align-items: center; gap: 6px; color: #7e7168; white-space: nowrap; }
+.audit-admin svg { color: #6e3c38; }
+.audit-action { display: inline-flex; padding: 5px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+.audit-action--create { background: #dceee2; color: #37704a; }
+.audit-action--update { background: #e8e0f1; color: #654d7e; }
+.audit-action--delete, .audit-action--reject { background: #f5dcda; color: #944942; }
+.audit-action--approve { background: #e4edda; color: #55702e; }
+.audit-action--status_change { background: #fff0c9; color: #8e681e; }
+.audit-description, .audit-record { display: block; }
+.audit-description { max-width: 330px; color: #40352e; font-weight: 600; }
+.audit-record { margin-top: 4px; color: #a09187; font-size: 10px; }
 .settings-page { display: grid; gap: 20px; }
 .settings-form { display: grid; gap: 16px; }
 .settings-success { display: flex; align-items: center; gap: 8px; padding: 12px 15px; border: 1px solid #a9d0b2; border-radius: 9px; background: #f0faf2; color: #39704b; font-size: 13px; font-weight: 600; }
