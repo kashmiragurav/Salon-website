@@ -1,9 +1,3 @@
-function About() {
-  return (
-    <div>
-      <h1>About</h1>
-    </div>
-  );
-}
+function About({ settings }) { const salon = settings.data; return <section className="section page-intro"><span className="eyebrow">About {salon?.salonName || ""}</span><h1>A little more care in every detail.</h1><p className="lead">{salon?.heroDescription || ""}</p><div className="stats stats--inline"><div><strong>{salon?.yearsActive ?? "—"}</strong><span>years of craft</span></div><div><strong>{salon?.clientsServed ?? "—"}</strong><span>clients welcomed</span></div><div><strong>{salon?.staffCount ?? "—"}</strong><span>talents in the team</span></div></div></section>; }
 
 export default About;

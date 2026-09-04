@@ -1,9 +1,6 @@
-function Contact() {
-  return (
-    <div>
-      <h1>Contact</h1>
-    </div>
-  );
-}
+import { useState } from "react";
+import { createEnquiry } from "../services/enquiryService";
+import { ErrorState } from "../components/DataState";
+function Contact({ settings }) { const salon = settings.data; const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" }); const [state, setState] = useState({ loading: false, error: "", sent: false }); const update = (event) => setForm({ ...form, [event.target.name]: event.target.value }); const submit = async (event) => { event.preventDefault(); setState({ loading: true, error: "", sent: false }); try { await createEnquiry(form); setForm({ name: "", email: "", phone: "", message: "" }); setState({ loading: false, error: "", sent: true }); } catch (error) { console.error(error); setState({ loading: false, error: "We could not send your message. Please try again.", sent: false }); } }; return <section className="section contact-layout"><div className="page-intro"><span className="eyebrow">Contact</span><h1>Come and say hello.</h1><div className="contact-details"><p>{salon?.address || "Address unavailable"}</p><a href={salon?.phone ? `tel:${salon.phone}` : undefined}>{salon?.phone || "Phone unavailable"}</a><a href={salon?.whatsappNumber ? `https://wa.me/${salon.whatsappNumber.replace(/\D/g, "")}` : undefined}>WhatsApp</a></div>{salon?.mapEmbedUrl && <iframe title="Salon location" src={salon.mapEmbedUrl} loading="lazy" />}</div><form className="form-panel" onSubmit={submit}><h2>Send an enquiry</h2>{["name", "email", "phone"].map((name) => <label key={name}>{name}<input required={name !== "phone"} type={name === "email" ? "email" : "text"} name={name} value={form[name]} onChange={update} /></label>)}<label>message<textarea required name="message" rows="5" value={form.message} onChange={update} /></label>{state.error && <ErrorState message={state.error} />}{state.sent && <p className="success-message">Thank you. Your enquiry has been sent.</p>}<button className="button" disabled={state.loading}>{state.loading ? "Sending..." : "Send message"}</button></form></section>; }
 
 export default Contact;

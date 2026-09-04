@@ -1,9 +1,4 @@
-function Pricing() {
-  return (
-    <div>
-      <h1>Pricing</h1>
-    </div>
-  );
-}
+import Services from "./Services";
+function Pricing() { return <Services />; }
 
 export default Pricing;

@@ -1,25 +1,26 @@
-import { auth, db, storage, firebaseReady } from "./firebase/config";
+import { Navigate, Route, Routes } from "react-router-dom";
+import PublicLayout from "./components/PublicLayout";
+import { useSalonSettings } from "./hooks/useSalonData";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Services from "./pages/Services";
+import Gallery from "./pages/Gallery";
+import Pricing from "./pages/Pricing";
+import Contact from "./pages/Contact";
+import BookAppointment from "./pages/BookAppointment";
 
 function App() {
-  console.log("Firebase Auth:", auth);
-  console.log("Firebase Database:", db);
-  console.log("Firebase Storage:", storage);
-  console.log("Firebase Ready:", firebaseReady);
-
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-3">
-      <h1 className="text-3xl font-bold">Salon Website</h1>
-      <div
-        className={`px-4 py-2 rounded-full text-sm font-medium ${
-          firebaseReady
-            ? "bg-green-100 text-green-700 border border-green-300"
-            : "bg-red-100 text-red-700 border border-red-300"
-        }`}
-      >
-        {firebaseReady ? "Firebase connected" : "Firebase not connected"}
-      </div>
-    </div>
-  );
+  const settings = useSalonSettings();
+  return <Routes><Route element={<PublicLayout settings={settings.data} />}>
+    <Route path="/" element={<Home settings={settings} />} />
+    <Route path="/about" element={<About settings={settings} />} />
+    <Route path="/services" element={<Services />} />
+    <Route path="/gallery" element={<Gallery />} />
+    <Route path="/pricing" element={<Pricing />} />
+    <Route path="/contact" element={<Contact settings={settings} />} />
+    <Route path="/book-appointment" element={<BookAppointment />} />
+    <Route path="*" element={<Navigate to="/" replace />} />
+  </Route></Routes>;
 }
 
 export default App;
