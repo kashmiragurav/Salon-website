@@ -27,9 +27,9 @@ function RecentBookingsTable({ bookings }) {
             return (
               <tr key={booking.id}>
                 <td><span className="customer-name">{booking.customerName || booking.name || "Unnamed customer"}</span><span className="customer-email">{booking.email || ""}</span></td>
-                <td>{booking.serviceName || booking.service || "-"}</td>
-                <td>{formatDate(booking.date || booking.appointmentDate)}</td>
-                <td>{booking.time || booking.appointmentTime || "-"}</td>
+                <td>{booking.serviceSelected || booking.serviceName || booking.service || "-"}</td>
+                <td>{formatDate(booking.preferredDate || booking.date || booking.appointmentDate)}</td>
+                <td>{booking.preferredTime || booking.time || booking.appointmentTime || "-"}</td>
                 <td><span className={`status-badge status-badge--${status}`}>{statusLabel}</span></td>
               </tr>
             );

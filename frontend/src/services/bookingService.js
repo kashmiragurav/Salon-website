@@ -14,13 +14,19 @@ export const validateBooking = (booking) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  if (!String(booking.customerName || "").trim()) errors.customerName = "Enter your name.";
+  const customerName = String(booking.customerName || "").trim();
+  const serviceSelected = String(booking.serviceSelected || "").trim();
+  const notes = String(booking.notes || "").trim();
+  if (!customerName) errors.customerName = "Enter your name.";
+  else if (customerName.length > 120) errors.customerName = "Keep your name under 120 characters.";
   if (!phone) errors.phone = "Enter your phone number.";
   else if (!/^[+]?[(]?[0-9\s().-]{7,20}$/.test(phone) || phone.replace(/\D/g, "").length < 7) errors.phone = "Enter a valid phone number.";
-  if (!String(booking.serviceSelected || "").trim() || !String(booking.serviceId || "").trim()) errors.serviceSelected = "Choose a service.";
+  if (!serviceSelected || !String(booking.serviceId || "").trim()) errors.serviceSelected = "Choose a service.";
+  else if (serviceSelected.length > 160) errors.serviceSelected = "Choose a shorter service name.";
   if (!booking.preferredDate) errors.preferredDate = "Choose a date.";
   else if (!isExactDate || selectedDate < today) errors.preferredDate = "Choose a current or future date.";
   if (!booking.preferredTime) errors.preferredTime = "Choose a time.";
+  if (notes.length > 2000) errors.notes = "Keep notes under 2,000 characters.";
 
   return errors;
 };
