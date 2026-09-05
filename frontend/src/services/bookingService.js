@@ -1,6 +1,6 @@
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
 
-import { db } from "../firebase/config";
+import { auth, db } from "../firebase/config";
 
 export const validateBooking = (booking) => {
   const errors = {};
@@ -31,7 +31,25 @@ export const validateBooking = (booking) => {
   return errors;
 };
 
-export const createBooking = async (booking) => addDoc(collection(db, "bookings"), {
+export const getMyBookings = async (userId) => {
+  if (!userId || auth.currentUser?.uid !== userId) throw new Error("A valid signed-in client is required.");
+  const snapshot = await getDocs(query(collection(db, "bookings"), where("userId", "==", userId)));
+  return snapshot.docs.map((item) => ({ id: item.id, ...item.data() })).sort((first, second) => {
+    const firstTime = first.createdAt?.toMillis?.() || 0;
+    const secondTime = second.createdAt?.toMillis?.() || 0;
+    return secondTime - firstTime;
+  });
+};
+
+export const cancelBooking = async (bookingId) => updateDoc(doc(db, "bookings", bookingId), {
+  status: "Cancelled",
+  updatedAt: serverTimestamp(),
+});
+
+export const createBooking = async (booking) => {
+  if (!auth.currentUser?.uid) throw new Error("Please sign in before booking an appointment.");
+  return addDoc(collection(db, "bookings"), {
+  userId: auth.currentUser.uid,
   customerName: booking.customerName.trim(),
   phone: booking.phone.trim(),
   serviceSelected: booking.serviceSelected.trim(),
@@ -41,4 +59,6 @@ export const createBooking = async (booking) => addDoc(collection(db, "bookings"
   notes: booking.notes.trim(),
   status: "Pending",
   createdAt: serverTimestamp(),
-});
+  updatedAt: serverTimestamp(),
+  });
+};

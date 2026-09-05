@@ -43,10 +43,14 @@ service cloud.firestore {
     }
 
     match /bookings/{bookingId} {
-      allow create: if !signedIn()
-        && hasOnly(['customerName', 'phone', 'serviceSelected', 'serviceId', 'preferredDate', 'preferredTime', 'notes', 'status', 'createdAt'])
+      allow create: if signedIn()
+        && request.resource.data.userId == request.auth.uid
+        && hasOnly(['userId', 'customerName', 'phone', 'serviceSelected', 'serviceId', 'preferredDate', 'preferredTime', 'notes', 'status', 'createdAt', 'updatedAt'])
+        && hasOnly(['userId', 'customerName', 'phone', 'serviceSelected', 'serviceId', 'preferredDate', 'preferredTime', 'notes', 'status', 'createdAt', 'updatedAt'])
         && request.resource.data.status == 'Pending'
+        && request.resource.data.updatedAt == request.time
         && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
         && request.resource.data.customerName is string
         && request.resource.data.customerName.size() > 0
         && request.resource.data.customerName.size() <= 120
@@ -65,7 +69,15 @@ service cloud.firestore {
         && request.resource.data.preferredTime is string
         && request.resource.data.preferredTime.size() > 0
         && request.resource.data.notes is string;
-      allow read, update: if isAdmin();
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow update: if isAdmin()
+        || (signedIn()
+          && resource.data.userId == request.auth.uid
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+          && resource.data.status in ['Pending', 'Confirmed']
+          && request.resource.data.status == 'Cancelled'
+          && request.resource.data.updatedAt == request.time);
       allow delete: if false;
     }
 
@@ -87,7 +99,15 @@ service cloud.firestore {
         && request.resource.data.subject.size() > 0
         && request.resource.data.subject.size() <= 200
         && request.resource.data.message is string;
-      allow read, update: if isAdmin();
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
+      allow update: if isAdmin()
+        || (signedIn()
+          && resource.data.userId == request.auth.uid
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+          && resource.data.status in ['Pending', 'Confirmed']
+          && request.resource.data.status == 'Cancelled'
+          && request.resource.data.updatedAt == request.time);
       allow delete: if false;
     }
 

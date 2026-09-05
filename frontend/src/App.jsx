@@ -8,6 +8,10 @@ import Gallery from "./pages/Gallery";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
 import BookAppointment from "./pages/BookAppointment";
+import Login from "./pages/Login";
+import Profile from "./pages/Profile";
+import MyAppointments from "./pages/MyAppointments";
+import ProtectedClientRoute from "./components/ProtectedClientRoute";
 
 function App() {
   const settings = useSalonSettings();
@@ -19,6 +23,11 @@ function App() {
     <Route path="/pricing" element={<Pricing />} />
     <Route path="/contact" element={<Contact settings={settings} />} />
     <Route path="/book-appointment" element={<BookAppointment />} />
+    <Route path="/login" element={<Login />} />
+    <Route element={<ProtectedClientRoute />}>
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/my-appointments" element={<MyAppointments />} />
+    </Route>
     <Route path="*" element={<Navigate to="/" replace />} />
   </Route></Routes>;
 }
