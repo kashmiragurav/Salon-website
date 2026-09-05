@@ -49,10 +49,9 @@ export const addGalleryImage = async ({ file, category, caption }) => {
   const storagePath = `gallery/${fileName(file)}`;
   const imageRef = ref(storage, storagePath);
 
-  await uploadBytes(imageRef, file, { contentType: file.type });
-  const imageUrl = await getDownloadURL(imageRef);
-
   try {
+    await uploadBytes(imageRef, file, { contentType: file.type });
+    const imageUrl = await getDownloadURL(imageRef);
     const reference = await addDoc(galleryCollection, {
       imageUrl,
       storagePath,

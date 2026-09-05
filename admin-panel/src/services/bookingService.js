@@ -12,7 +12,7 @@ import { db } from "../firebase/config";
 import { createAuditLog } from "./auditService";
 
 const bookingsCollection = collection(db, "bookings");
-const validStatuses = ["Pending", "Confirmed", "Cancelled"];
+const validStatuses = ["Pending", "Confirmed", "Cancelled", "Completed"];
 
 export const BOOKING_STATUSES = validStatuses;
 

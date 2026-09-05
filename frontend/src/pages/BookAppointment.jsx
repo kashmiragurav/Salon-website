@@ -27,7 +27,7 @@ function BookAppointment() {
       setState({ loading: false, error: "", sent: true, validation: {} });
     } catch (error) {
       console.error(error);
-      setState({ loading: false, error: "We could not send your booking request. Please try again.", sent: false, validation: {} });
+      setState({ loading: false, error: `We could not send your booking request (${error.code || "Firestore error"}). Please try again.`, sent: false, validation: {} });
     }
   };
   const field = (name, label, type = "text") => <label key={name}>{label}<input required aria-invalid={Boolean(state.validation[name])} aria-describedby={state.validation[name] ? `${name}-error` : undefined} type={type} name={name} value={form[name]} onChange={update} min={type === "date" ? new Date().toISOString().slice(0, 10) : undefined} />{state.validation[name] && <span id={`${name}-error`} className="error-message">{state.validation[name]}</span>}</label>;

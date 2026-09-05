@@ -46,9 +46,7 @@ service cloud.firestore {
       allow create: if signedIn()
         && request.resource.data.userId == request.auth.uid
         && hasOnly(['userId', 'customerName', 'phone', 'serviceSelected', 'serviceId', 'preferredDate', 'preferredTime', 'notes', 'status', 'createdAt', 'updatedAt'])
-        && hasOnly(['userId', 'customerName', 'phone', 'serviceSelected', 'serviceId', 'preferredDate', 'preferredTime', 'notes', 'status', 'createdAt', 'updatedAt'])
         && request.resource.data.status == 'Pending'
-        && request.resource.data.updatedAt == request.time
         && request.resource.data.createdAt == request.time
         && request.resource.data.updatedAt == request.time
         && request.resource.data.customerName is string
@@ -82,8 +80,7 @@ service cloud.firestore {
     }
 
     match /enquiries/{enquiryId} {
-      allow create: if !signedIn()
-        && hasOnly(['name', 'email', 'phone', 'subject', 'message', 'status', 'createdAt'])
+      allow create: if hasOnly(['name', 'email', 'phone', 'subject', 'message', 'status', 'createdAt'])
         && request.resource.data.status == 'NEW'
         && request.resource.data.createdAt == request.time
         && request.resource.data.name is string
@@ -99,15 +96,26 @@ service cloud.firestore {
         && request.resource.data.subject.size() > 0
         && request.resource.data.subject.size() <= 200
         && request.resource.data.message is string;
-      allow read: if isAdmin() || (signedIn() && resource.data.userId == request.auth.uid);
-      allow update: if isAdmin()
-        || (signedIn()
-          && resource.data.userId == request.auth.uid
-          && request.resource.data.userId == resource.data.userId
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
-          && resource.data.status in ['Pending', 'Confirmed']
-          && request.resource.data.status == 'Cancelled'
-          && request.resource.data.updatedAt == request.time);
+      allow read, update: if isAdmin();
+      allow delete: if false;
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && request.auth.uid == userId;
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.uid == userId
+        && request.resource.data.role == 'client'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'email', 'phone', 'role', 'createdAt', 'updatedAt']);
+      allow update: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'email', 'phone', 'role', 'createdAt', 'updatedAt'])
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time;
       allow delete: if false;
     }
 

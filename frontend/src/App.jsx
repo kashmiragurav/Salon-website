@@ -9,6 +9,7 @@ import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
 import BookAppointment from "./pages/BookAppointment";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import MyAppointments from "./pages/MyAppointments";
 import ProtectedClientRoute from "./components/ProtectedClientRoute";
@@ -22,8 +23,11 @@ function App() {
     <Route path="/gallery" element={<Gallery />} />
     <Route path="/pricing" element={<Pricing />} />
     <Route path="/contact" element={<Contact settings={settings} />} />
-    <Route path="/book-appointment" element={<BookAppointment />} />
+    <Route element={<ProtectedClientRoute />}>
+      <Route path="/book-appointment" element={<BookAppointment />} />
+    </Route>
     <Route path="/login" element={<Login />} />
+    <Route path="/signup" element={<Signup />} />
     <Route element={<ProtectedClientRoute />}>
       <Route path="/profile" element={<Profile />} />
       <Route path="/my-appointments" element={<MyAppointments />} />

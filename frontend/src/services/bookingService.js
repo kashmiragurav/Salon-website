@@ -1,6 +1,11 @@
-import { addDoc, collection, doc, getDocs, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
 
 import { auth, db } from "../firebase/config";
+
+export const validatePhone = (value) => {
+  const phone = String(value || "").trim();
+  return /^[+]?[(]?[0-9\s().-]{7,20}$/.test(phone) && phone.replace(/\D/g, "").length >= 7;
+};
 
 export const validateBooking = (booking) => {
   const errors = {};
@@ -20,7 +25,7 @@ export const validateBooking = (booking) => {
   if (!customerName) errors.customerName = "Enter your name.";
   else if (customerName.length > 120) errors.customerName = "Keep your name under 120 characters.";
   if (!phone) errors.phone = "Enter your phone number.";
-  else if (!/^[+]?[(]?[0-9\s().-]{7,20}$/.test(phone) || phone.replace(/\D/g, "").length < 7) errors.phone = "Enter a valid phone number.";
+  else if (!validatePhone(phone)) errors.phone = "Enter a valid phone number.";
   if (!serviceSelected || !String(booking.serviceId || "").trim()) errors.serviceSelected = "Choose a service.";
   else if (serviceSelected.length > 160) errors.serviceSelected = "Choose a shorter service name.";
   if (!booking.preferredDate) errors.preferredDate = "Choose a date.";
@@ -39,6 +44,26 @@ export const getMyBookings = async (userId) => {
     const secondTime = second.createdAt?.toMillis?.() || 0;
     return secondTime - firstTime;
   });
+};
+
+export const subscribeToMyBookings = (userId, onData, onError) => {
+  if (!userId || auth.currentUser?.uid !== userId) throw new Error("A valid signed-in client is required.");
+  return onSnapshot(query(collection(db, "bookings"), where("userId", "==", userId)), (snapshot) => {
+    const bookings = snapshot.docs.map((item) => ({ id: item.id, ...item.data() })).sort((first, second) => {
+      const firstTime = first.createdAt?.toMillis?.() || 0;
+      const secondTime = second.createdAt?.toMillis?.() || 0;
+      return secondTime - firstTime;
+    });
+    onData(bookings);
+  }, onError);
+};
+
+export const getBookingById = async (bookingId) => {
+  if (!auth.currentUser?.uid) throw new Error("A signed-in client is required.");
+  const snapshot = await getDoc(doc(db, "bookings", bookingId));
+  if (!snapshot.exists()) return null;
+  const booking = { id: snapshot.id, ...snapshot.data() };
+  return booking.userId === auth.currentUser.uid ? booking : null;
 };
 
 export const cancelBooking = async (bookingId) => updateDoc(doc(db, "bookings", bookingId), {
