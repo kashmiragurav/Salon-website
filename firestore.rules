@@ -46,12 +46,15 @@ service cloud.firestore {
     match /testimonials/{testimonialId} {
       allow read: if isAdmin() || resource.data.isApproved == true;
       allow create: if isAdmin()
-        || (signedIn()
-          && request.resource.data.userId == request.auth.uid
+        || (request.resource.data.isApproved == false
+          && (!('userId' in request.resource.data)
+            || (signedIn() && request.resource.data.userId == request.auth.uid))
           && request.resource.data.isApproved == false
-          && request.resource.data.keys().hasOnly(['clientName', 'rating', 'reviewText', 'photoUrl', 'userId', 'isApproved', 'createdAt'])
+          && request.resource.data.keys().hasOnly(['clientName', 'email', 'rating', 'reviewText', 'photoUrl', 'userId', 'isApproved', 'createdAt'])
           && request.resource.data.clientName is string
           && request.resource.data.clientName.size() > 0
+          && (!('email' in request.resource.data)
+            || (request.resource.data.email is string && request.resource.data.email.size() <= 254))
           && request.resource.data.rating is number
           && request.resource.data.rating >= 1
           && request.resource.data.rating <= 5

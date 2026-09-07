@@ -11,6 +11,7 @@ import BookAppointment from "./pages/BookAppointment";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
+import Testimonials from "./pages/Testimonials";
 import Profile from "./pages/Profile";
 import MyAppointments from "./pages/MyAppointments";
 import ProtectedClientRoute from "./components/ProtectedClientRoute";
@@ -22,6 +23,7 @@ function App() {
     <Route path="/about" element={<About settings={settings} />} />
     <Route path="/services" element={<Services />} />
     <Route path="/gallery" element={<Gallery />} />
+    <Route path="/testimonials" element={<Testimonials />} />
     <Route path="/pricing" element={<Pricing />} />
     <Route path="/contact" element={<Contact settings={settings} />} />
     <Route element={<ProtectedClientRoute />}>
