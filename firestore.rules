@@ -32,6 +32,12 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    match /offers/{itemId} { allow read: if resource.data.isActive == true || isAdmin(); allow create, update, delete: if isAdmin(); }
+    match /packages/{itemId} { allow read: if resource.data.isActive == true || isAdmin(); allow create, update, delete: if isAdmin(); }
+    match /team/{itemId} { allow read: if resource.data.isActive == true || isAdmin(); allow create, update, delete: if isAdmin(); }
+    match /beforeAfter/{itemId} { allow read: if resource.data.isActive == true || isAdmin(); allow create, update, delete: if isAdmin(); }
+    match /faqs/{itemId} { allow read: if resource.data.isActive == true || isAdmin(); allow create, update, delete: if isAdmin(); }
+
     match /gallery/{imageId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();

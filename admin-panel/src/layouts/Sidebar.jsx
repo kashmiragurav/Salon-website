@@ -12,12 +12,22 @@ import {
   Sparkles,
   UserRound,
   X,
+  BadgePercent,
+  Boxes,
+  UsersRound,
+  GitCompare,
+  CircleHelp,
 } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "Appointments", path: "/appointments", icon: CalendarDays },
   { label: "Services", path: "/services", icon: Sparkles },
+  { label: "Offers", path: "/offers", icon: BadgePercent },
+  { label: "Packages", path: "/packages", icon: Boxes },
+  { label: "Before & After", path: "/before-after", icon: GitCompare },
+  { label: "Team", path: "/team", icon: UsersRound },
+  { label: "FAQs", path: "/faqs", icon: CircleHelp },
   { label: "Gallery", path: "/gallery", icon: Images },
   { label: "Testimonials", path: "/testimonials", icon: MessageSquareText },
   { label: "Enquiries", path: "/enquiries", icon: ClipboardList },

@@ -14,6 +14,11 @@ import Enquiries from "./pages/Enquiries";
 import Settings from "./pages/Settings";
 import About from "./pages/About";
 import AuditHistory from "./pages/AuditHistory";
+import Offers from "./pages/Offers";
+import Packages from "./pages/Packages";
+import Team from "./pages/Team";
+import BeforeAfter from "./pages/BeforeAfter";
+import FAQs from "./pages/FAQs";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLayout from "./layouts/AdminLayout";
@@ -57,6 +62,12 @@ function App() {
           path="/services"
           element={<Services />}
         />
+
+        <Route path="/offers" element={<Offers />} />
+        <Route path="/packages" element={<Packages />} />
+        <Route path="/team" element={<Team />} />
+        <Route path="/before-after" element={<BeforeAfter />} />
+        <Route path="/faqs" element={<FAQs />} />
 
         <Route
           path="/gallery"

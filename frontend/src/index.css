@@ -85,3 +85,16 @@ html { scroll-behavior: smooth; }
 .lightbox__previous { grid-column: 1; grid-row: 1; }.lightbox__next { grid-column: 3; grid-row: 1; }
 .lightbox__caption { grid-column: 2; padding: 16px 0 0; text-align: center; color: #68736b; }
 @media (max-width: 600px) { .lightbox { padding: 10px; }.lightbox__panel { grid-template-columns: 38px minmax(0, 1fr) 38px; padding: 14px; }.lightbox__image { max-height: calc(100vh - 120px); } }
+.content-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.content-card { display: grid; align-content: start; gap: 10px; min-height: 190px; padding: 24px; border: 1px solid #dce0d8; background: #fffaf3; }
+.content-card h3 { margin: 6px 0 0; font-family: 'Playfair Display', serif; font-size: 25px; font-weight: 500; }
+.content-card p { margin: 0; color: #68736b; line-height: 1.6; }
+.content-card strong { color: #b96839; font-size: 18px; }
+.content-card img { width: 100%; max-height: 220px; object-fit: contain; background: #e8eee7; }
+.content-card--transform > div { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.content-card--transform > div img { aspect-ratio: 1; max-height: none; }
+.faq-list { display: grid; gap: 10px; max-width: 800px; }
+.faq-list details { border-bottom: 1px solid #cfd8d0; padding: 18px 0; }
+.faq-list summary { cursor: pointer; color: #2d554d; font-family: 'Playfair Display', serif; font-size: 22px; }
+.faq-list p { max-width: 650px; color: #68736b; line-height: 1.7; }
+@media (max-width: 760px) { .content-cards { grid-template-columns: 1fr; } }
