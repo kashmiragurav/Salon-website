@@ -6,8 +6,8 @@ export default function PublicLayout({ settings }) {
   const { user, logout } = useClientAuth();
   const navigate = useNavigate();
   const navigation = [
-    ["About", "/about"], ["Services", "/services"], ["Gallery", "/gallery"],
-    ["Pricing", "/pricing"], ["Contact", "/contact"],
+    ["Home", "/"], ["About", "/about"], ["Services", "/services"], ["Gallery", "/gallery"],
+    ["Contact", "/contact"],
   ];
   return <div className="site-shell">
     <header className="site-header"><Link className="brand" to="/"><span className="brand-mark">S</span><span>{settings?.salonName || "Salon"}</span></Link><nav className="site-nav" aria-label="Main navigation">{navigation.map(([label, path]) => <NavLink key={path} to={path}>{label}</NavLink>)}{user && <><NavLink to="/profile">Profile</NavLink><NavLink to="/my-appointments">My Appointments</NavLink></>}</nav><div className="header-actions">{user ? <button type="button" className="account-link" onClick={async () => { await logout(); navigate("/"); }}>Logout</button> : <><Link className="account-link" to="/login">Login</Link><Link className="account-link" to="/signup">Sign Up</Link></>}<Link className="button button--small" to="/book-appointment">Book now <ArrowUpRight size={16} /></Link></div></header>

@@ -21,12 +21,14 @@ export const validateBooking = (booking) => {
 
   const customerName = String(booking.customerName || "").trim();
   const serviceSelected = String(booking.serviceSelected || "").trim();
+  const gender = String(booking.gender || "").trim();
   const notes = String(booking.notes || "").trim();
   if (!customerName) errors.customerName = "Enter your name.";
   else if (customerName.length > 120) errors.customerName = "Keep your name under 120 characters.";
   if (!phone) errors.phone = "Enter your phone number.";
   else if (!validatePhone(phone)) errors.phone = "Enter a valid phone number.";
   if (!serviceSelected || !String(booking.serviceId || "").trim()) errors.serviceSelected = "Choose a service.";
+  if (!gender) errors.gender = "Choose a gender.";
   else if (serviceSelected.length > 160) errors.serviceSelected = "Choose a shorter service name.";
   if (!booking.preferredDate) errors.preferredDate = "Choose a date.";
   else if (!isExactDate || selectedDate < today) errors.preferredDate = "Choose a current or future date.";
@@ -77,6 +79,7 @@ export const createBooking = async (booking) => {
   userId: auth.currentUser.uid,
   customerName: booking.customerName.trim(),
   phone: booking.phone.trim(),
+  gender: booking.gender.trim(),
   serviceSelected: booking.serviceSelected.trim(),
   serviceId: booking.serviceId.trim(),
   preferredDate: booking.preferredDate,

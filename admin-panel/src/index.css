@@ -46,7 +46,7 @@ button, a { font: inherit; }
 .admin-main { flex: 1; padding: 30px 4vw 50px; }
 .admin-main__inner { width: 100%; max-width: 1180px; margin: 0 auto; }
 .image-preview { display: grid; min-height: 120px; place-items: center; margin-top: 10px; border: 1px dashed #d7c9bc; background: #fcf5ef; color: #968a80; font-size: 12px; text-align: center; }
-.image-preview img { display: block; width: 100%; max-height: 180px; object-fit: cover; }
+.image-preview img { display: block; width: 100%; max-height: 180px; object-fit: contain; }
 .auth-loading { display: flex; min-height: 100vh; align-items: center; justify-content: center; background: #f5f2ee; }
 .auth-loading__panel { display: flex; align-items: center; gap: 12px; padding: 18px 22px; border: 1px solid #e2d9d0; border-radius: 12px; background: #fffaf6; color: #5e554d; font-size: 13px; }
 .loading-mark { width: 12px; height: 12px; border: 2px solid #ddc39e; border-top-color: #6e3c38; border-radius: 50%; animation: spin .8s linear infinite; }
@@ -149,6 +149,7 @@ button, a { font: inherit; }
 .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: #9a6b61; box-shadow: 0 0 0 2px rgba(154,107,97,.14); }
 .form-field small { display: block; margin-top: 5px; color: #a84f48; font-size: 11px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.duration-input { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .modal-actions { display: flex; justify-content: end; gap: 9px; margin-top: 22px; }
 .confirm-modal { width: min(100%, 420px); text-align: center; }
 .confirm-modal__icon { display: inline-flex; width: 46px; height: 46px; align-items: center; justify-content: center; border-radius: 50%; background: #f5dcda; color: #a84f48; }
@@ -161,7 +162,7 @@ button, a { font: inherit; }
 .gallery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px; }
 .gallery-card { overflow: hidden; border: 1px solid #e7ddd4; border-radius: 11px; background: white; }
 .gallery-card__image { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #eee1d5; }
-.gallery-card__image img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
+.gallery-card__image img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: contain; }
 .gallery-card__fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #a28773; }
 .gallery-card__body { display: flex; align-items: start; justify-content: space-between; gap: 12px; padding: 15px; }
 .gallery-category { color: #9a722d; font-size: 10px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }

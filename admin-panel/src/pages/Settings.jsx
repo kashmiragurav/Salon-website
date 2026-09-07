@@ -8,6 +8,7 @@ const emptySettings = {
   salonName: "", address: "", phone: "", whatsappNumber: "", workingHours: "",
   instagramLink: "", facebookLink: "", mapEmbedUrl: "", logoUrl: "", heroImageUrl: "",
   heroTitle: "", heroDescription: "", yearsActive: "", clientsServed: "", staffCount: "",
+  aboutTitle: "", aboutShortDescription: "", aboutDescription: "", aboutImageUrl: "", mission: "", vision: "",
 };
 
 const urlFields = ["instagramLink", "facebookLink", "mapEmbedUrl", "logoUrl", "heroImageUrl"];
@@ -40,7 +41,7 @@ function Settings() {
   useEffect(() => {
     let active = true;
     getSalonSettings().then((data) => {
-      if (active && data) setSettings({ ...emptySettings, ...data, yearsActive: data.yearsActive ?? "", clientsServed: data.clientsServed ?? "", staffCount: data.staffCount ?? "" });
+      if (active && data) setSettings({ ...emptySettings, ...data, yearsActive: data.yearsActive ?? "", clientsServed: data.clientsServed ?? "", staffCount: data.staffCount ?? "", aboutTitle: data.aboutTitle ?? "", aboutShortDescription: data.aboutShortDescription ?? "", aboutDescription: data.aboutDescription ?? "", aboutImageUrl: data.aboutImageUrl ?? "", mission: data.mission ?? "", vision: data.vision ?? "" });
     }).catch((settingsError) => {
       console.error("Salon settings failed to load:", settingsError);
       if (active) setError("We could not load salon settings from Firestore.");

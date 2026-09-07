@@ -31,7 +31,7 @@ export const createService = async (service) => {
     category: service.category,
     description: service.description.trim(),
     price: Number(service.price),
-    duration: service.duration.trim(),
+    durationMinutes: Number(service.durationMinutes),
     imageUrl: service.imageUrl.trim(),
     isActive: true,
     createdAt: serverTimestamp(),
@@ -47,7 +47,7 @@ export const updateService = async (serviceId, service) => {
     category: service.category,
     description: service.description.trim(),
     price: Number(service.price),
-    duration: service.duration.trim(),
+    durationMinutes: Number(service.durationMinutes),
     imageUrl: service.imageUrl.trim(),
     updatedAt: serverTimestamp(),
   });

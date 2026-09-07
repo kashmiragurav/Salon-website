@@ -1,6 +1,6 @@
 import { Menu, ShieldCheck } from "lucide-react";
 
-function Topbar({ title, userEmail, onMenuClick }) {
+function Topbar({ userEmail, onMenuClick }) {
   return (
     <header className="admin-topbar">
       <div className="admin-topbar__inner">
@@ -16,7 +16,6 @@ function Topbar({ title, userEmail, onMenuClick }) {
 
           <div>
             <p className="eyebrow">Workspace</p>
-            <h2>{title}</h2>
           </div>
         </div>
 

@@ -12,15 +12,11 @@ import Testimonials from "./pages/Testimonials";
 import Appointments from "./pages/Appointments";
 import Enquiries from "./pages/Enquiries";
 import Settings from "./pages/Settings";
+import About from "./pages/About";
 import AuditHistory from "./pages/AuditHistory";
-import PlaceholderPage from "./pages/PlaceholderPage";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLayout from "./layouts/AdminLayout";
-
-function ModulePlaceholder({ title }) {
-  return <PlaceholderPage title={title} />;
-}
 
 function App() {
   return (
@@ -79,7 +75,7 @@ function App() {
 
         <Route
           path="/about"
-          element={<ModulePlaceholder title="About" />}
+          element={<About />}
         />
 
         <Route

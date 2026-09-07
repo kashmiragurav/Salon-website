@@ -59,7 +59,7 @@ service cloud.firestore {
     match /bookings/{bookingId} {
       allow create: if signedIn()
         && request.resource.data.userId == request.auth.uid
-        && hasOnly(['userId', 'customerName', 'phone', 'serviceSelected', 'serviceId', 'preferredDate', 'preferredTime', 'notes', 'status', 'createdAt', 'updatedAt'])
+        && hasOnly(['userId', 'customerName', 'phone', 'gender', 'serviceSelected', 'serviceId', 'preferredDate', 'preferredTime', 'notes', 'status', 'createdAt', 'updatedAt'])
         && request.resource.data.status == 'Pending'
         && request.resource.data.createdAt == request.time
         && request.resource.data.updatedAt == request.time
@@ -69,6 +69,9 @@ service cloud.firestore {
         && request.resource.data.phone is string
         && request.resource.data.phone.size() > 0
         && request.resource.data.phone.size() <= 40
+        && request.resource.data.gender is string
+        && request.resource.data.gender.size() > 0
+        && request.resource.data.gender.size() <= 40
         && request.resource.data.serviceSelected is string
         && request.resource.data.serviceSelected.size() > 0
         && request.resource.data.serviceSelected.size() <= 160
