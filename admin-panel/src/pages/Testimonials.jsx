@@ -73,7 +73,11 @@ function Testimonials() {
     setFormErrors({}); setActionError(""); setFormOpen(true);
   };
   const closeForm = () => { if (!saving) setFormOpen(false); };
-  const handleChange = (event) => setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setForm((current) => ({ ...current, [name]: value }));
+    setFormErrors((current) => ({ ...current, [name]: validateForm({ ...form, [name]: value })[name] }));
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -142,9 +146,9 @@ function Testimonials() {
 
 function TestimonialForm({ form, errors, saving, editing, onChange, onSubmit, onClose }) {
   return <div className="modal-backdrop" role="presentation"><section className="service-form-modal" role="dialog" aria-modal="true" aria-labelledby="testimonial-form-title"><div className="modal-heading"><div><p className="eyebrow">Social proof</p><h2 id="testimonial-form-title">{editing ? "Edit testimonial" : "Add testimonial"}</h2></div><button type="button" className="modal-close" onClick={onClose} aria-label="Close testimonial form"><X size={18} /></button></div><form onSubmit={onSubmit} noValidate>
-    <label className="form-field"><span>Client name</span><input name="clientName" value={form.clientName} onChange={onChange} />{errors.clientName && <small>{errors.clientName}</small>}</label>
-    <label className="form-field"><span>Rating</span><select name="rating" value={form.rating} onChange={onChange}><option value="">Select rating</option>{ratings.map((rating) => <option key={rating} value={rating}>{rating} {rating === 1 ? "star" : "stars"}</option>)}</select>{errors.rating && <small>{errors.rating}</small>}</label>
-    <label className="form-field"><span>Review</span><textarea name="reviewText" value={form.reviewText} onChange={onChange} rows="5" />{errors.reviewText && <small>{errors.reviewText}</small>}</label>
+    <label className="form-field"><span>Client name *</span><input name="clientName" value={form.clientName} onChange={onChange} />{errors.clientName && <small>{errors.clientName}</small>}</label>
+    <label className="form-field"><span>Rating *</span><select name="rating" value={form.rating} onChange={onChange}><option value="">Select rating</option>{ratings.map((rating) => <option key={rating} value={rating}>{rating} {rating === 1 ? "star" : "stars"}</option>)}</select>{errors.rating && <small>{errors.rating}</small>}</label>
+    <label className="form-field"><span>Review *</span><textarea name="reviewText" value={form.reviewText} onChange={onChange} rows="5" />{errors.reviewText && <small>{errors.reviewText}</small>}</label>
     <label className="form-field"><span>Photo URL (optional)</span><input name="photoUrl" type="url" value={form.photoUrl} onChange={onChange} placeholder="https://..." />{errors.photoUrl && <small>{errors.photoUrl}</small>}</label>
     <div className="modal-actions"><button type="button" className="button-secondary" onClick={onClose} disabled={saving}>Cancel</button><button type="submit" className="button-primary" disabled={saving}>{saving ? "Saving..." : editing ? "Save changes" : "Add testimonial"}</button></div>
   </form></section></div>;

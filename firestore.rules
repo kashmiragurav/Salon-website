@@ -39,7 +39,21 @@ service cloud.firestore {
 
     match /testimonials/{testimonialId} {
       allow read: if isAdmin() || resource.data.isApproved == true;
-      allow create, update, delete: if isAdmin();
+      allow create: if isAdmin()
+        || (signedIn()
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.isApproved == false
+          && request.resource.data.keys().hasOnly(['clientName', 'rating', 'reviewText', 'photoUrl', 'userId', 'isApproved', 'createdAt'])
+          && request.resource.data.clientName is string
+          && request.resource.data.clientName.size() > 0
+          && request.resource.data.rating is number
+          && request.resource.data.rating >= 1
+          && request.resource.data.rating <= 5
+          && request.resource.data.reviewText is string
+          && request.resource.data.reviewText.size() > 0
+          && request.resource.data.photoUrl is string
+          && request.resource.data.createdAt == request.time);
+      allow update, delete: if isAdmin();
     }
 
     match /bookings/{bookingId} {

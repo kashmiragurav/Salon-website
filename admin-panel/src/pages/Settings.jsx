@@ -49,7 +49,9 @@ function Settings() {
   }, []);
 
   const handleChange = (event) => {
-    setSettings((current) => ({ ...current, [event.target.name]: event.target.value }));
+    const nextSettings = { ...settings, [event.target.name]: event.target.value };
+    setSettings(nextSettings);
+    setErrors((current) => ({ ...current, [event.target.name]: validateSettings(nextSettings)[event.target.name] }));
     setSuccess(false);
   };
 

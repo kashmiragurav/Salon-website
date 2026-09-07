@@ -10,6 +10,7 @@ import Contact from "./pages/Contact";
 import BookAppointment from "./pages/BookAppointment";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
 import MyAppointments from "./pages/MyAppointments";
 import ProtectedClientRoute from "./components/ProtectedClientRoute";
@@ -28,6 +29,7 @@ function App() {
     </Route>
     <Route path="/login" element={<Login />} />
     <Route path="/signup" element={<Signup />} />
+    <Route path="/forgot-password" element={<ForgotPassword />} />
     <Route element={<ProtectedClientRoute />}>
       <Route path="/profile" element={<Profile />} />
       <Route path="/my-appointments" element={<MyAppointments />} />

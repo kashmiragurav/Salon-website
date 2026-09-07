@@ -5,6 +5,7 @@ import { getActiveServices } from "../services/serviceService";
 import { getApprovedTestimonials } from "../services/testimonialService";
 import ServiceCard from "../components/ServiceCard";
 import TestimonialList from "../components/TestimonialList";
+import ReviewForm from "../components/ReviewForm";
 import { ErrorState, LoadingState } from "../components/DataState";
 
 function Home({ settings }) {
@@ -16,7 +17,7 @@ function Home({ settings }) {
     <section className="section intro"><div className="section-heading"><span className="eyebrow">The experience</span><h2>Where detail becomes a feeling.</h2></div><p className="lead">A calm, personal space for considered colour, shape, and care.</p></section>
     <section className="section section--soft"><div className="section-heading"><span className="eyebrow">Our edit</span><h2>Signature services</h2><Link className="text-link" to="/services">View all <ArrowUpRight size={16} /></Link></div>{services.loading ? <LoadingState label="Loading services" /> : services.error ? <ErrorState /> : <div className="service-grid">{services.data.slice(0, 3).map((service) => <ServiceCard key={service.id} service={service} />)}</div>}</section>
     <section className="section stats">{[["yearsActive", "years of craft"], ["clientsServed", "clients welcomed"], ["staffCount", "talents in the team"]].map(([key, label]) => <div key={key}><strong>{salon?.[key] ?? "—"}</strong><span>{label}</span></div>)}</section>
-    <section className="section"><div className="section-heading"><span className="eyebrow">Kind words</span><h2>From our clients</h2></div><TestimonialList {...testimonials} testimonials={testimonials.data} /></section>
+    <section className="section"><div className="section-heading"><span className="eyebrow">Kind words</span><h2>From our clients</h2></div><TestimonialList {...testimonials} testimonials={testimonials.data} /><ReviewForm /></section>
   </>;
 }
 

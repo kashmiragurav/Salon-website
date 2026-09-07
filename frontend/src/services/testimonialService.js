@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, serverTimestamp, where } from "firebase/firestore";
 
 import { db } from "../firebase/config";
 
@@ -12,3 +12,13 @@ export const getApprovedTestimonials = async () => {
       return secondTime - firstTime;
     });
 };
+
+export const createClientTestimonial = async ({ clientName, rating, reviewText, photoUrl = "", userId }) => addDoc(collection(db, "testimonials"), {
+  clientName: clientName.trim(),
+  rating: Number(rating),
+  reviewText: reviewText.trim(),
+  photoUrl: photoUrl.trim(),
+  userId,
+  isApproved: false,
+  createdAt: serverTimestamp(),
+});

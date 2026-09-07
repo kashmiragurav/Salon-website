@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { loginAdmin } from "../services/authServices";
@@ -17,16 +18,28 @@ function Login() {
   const [error, setError] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [validation, setValidation] = useState({});
 
   const handleChange = (event) => {
+    const nextForm = { ...form, [event.target.name]: event.target.value };
     setForm({
-      ...form,
-      [event.target.name]: event.target.value,
+      ...nextForm,
     });
+    setValidation((current) => ({ ...current, [event.target.name]: undefined }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const nextValidation = {};
+    if (!form.email.trim()) nextValidation.email = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) nextValidation.email = "Please enter a valid email address.";
+    if (!form.password) nextValidation.password = "Password is required.";
+    if (Object.keys(nextValidation).length) {
+      setValidation(nextValidation);
+      return;
+    }
 
     setError("");
     setLoading(true);
@@ -86,7 +99,7 @@ function Login() {
           <div>
 
             <label className="block mb-2 font-medium">
-              Email
+              Email *
             </label>
 
             <input
@@ -98,17 +111,18 @@ function Login() {
               className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-neutral-900"
               placeholder="admin@example.com"
             />
+            {validation.email && <small className="text-red-700">{validation.email}</small>}
 
           </div>
 
           <div>
 
             <label className="block mb-2 font-medium">
-              Password
+              Password *
             </label>
 
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               value={form.password}
               onChange={handleChange}
@@ -116,6 +130,8 @@ function Login() {
               className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-neutral-900"
               placeholder="Enter your password"
             />
+            <button type="button" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? "Hide password" : "Show password"} className="absolute right-3 top-11 text-neutral-500">{showPassword ? <EyeOff size={17} /> : <Eye size={17} />}</button>
+            {validation.password && <small className="text-red-700">{validation.password}</small>}
 
           </div>
 

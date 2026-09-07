@@ -8,9 +8,10 @@ import {
   getDoc,
 } from "firebase/firestore";
 
-import { auth, db } from "../firebase/config";
+import { auth, authPersistenceReady, db } from "../firebase/config";
 
 export const loginAdmin = async (email, password) => {
+  await authPersistenceReady;
   const userCredential = await signInWithEmailAndPassword(
     auth,
     email,

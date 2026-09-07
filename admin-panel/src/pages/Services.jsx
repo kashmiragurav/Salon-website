@@ -20,12 +20,19 @@ const validateForm = (form) => {
   if (!form.name.trim()) errors.name = "Name is required.";
   if (!form.category) errors.category = "Category is required.";
   if (!form.description.trim()) errors.description = "Description is required.";
-  if (form.price === "" || Number.isNaN(Number(form.price)) || Number(form.price) < 0) errors.price = "Enter a price of 0 or more.";
-  if (!form.duration.trim()) errors.duration = "Duration is required.";
+  if (form.price === "" || Number.isNaN(Number(form.price)) || Number(form.price) <= 0) errors.price = "Enter a price greater than 0.";
+  if (!form.duration.trim() || Number.isNaN(Number(form.duration)) || Number(form.duration) <= 0) errors.duration = "Enter a duration greater than 0 minutes.";
+  if (!form.imageUrl.trim()) errors.imageUrl = "Image URL is required.";
+  else {
+    try {
+      const imageUrl = new URL(form.imageUrl);
+      if (!['http:', 'https:'].includes(imageUrl.protocol)) errors.imageUrl = "Please enter a valid image URL.";
+    } catch { errors.imageUrl = "Please enter a valid image URL."; }
+  }
   return errors;
 };
 
-const formatPrice = (price) => new Intl.NumberFormat("en", { style: "currency", currency: "USD" }).format(Number(price) || 0);
+const formatPrice = (price) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(Number(price) || 0);
 
 function Services() {
   const [services, setServices] = useState([]);
@@ -65,11 +72,16 @@ function Services() {
   const openAddForm = () => { setEditingService(null); setForm(emptyForm); setFormErrors({}); setActionError(""); setFormOpen(true); };
   const openEditForm = (service) => {
     setEditingService(service);
-    setForm({ name: service.name || "", category: service.category || "", description: service.description || "", price: String(service.price ?? ""), duration: service.duration || "", imageUrl: service.imageUrl || "" });
+    setForm({ name: service.name || "", category: service.category || "", description: service.description || "", price: String(service.price ?? ""), duration: String(service.duration || "").match(/\d+(?:\.\d+)?/)?.[0] || "", imageUrl: service.imageUrl || "" });
     setFormErrors({}); setActionError(""); setFormOpen(true);
   };
   const closeForm = () => { if (!saving) setFormOpen(false); };
-  const handleChange = (event) => setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    const nextForm = { ...form, [name]: value };
+    setForm(nextForm);
+    setFormErrors((current) => ({ ...current, [name]: validateForm(nextForm)[name] }));
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -122,7 +134,7 @@ function Services() {
         {!loading && !error && visibleServices.length > 0 && (
           <div className="services-table-wrap"><table className="services-table"><thead><tr><th>Service</th><th>Category</th><th>Price</th><th>Duration</th><th>Status</th><th><span className="sr-only">Actions</span></th></tr></thead><tbody>
             {visibleServices.map((service) => <tr key={service.id}>
-              <td><div className="service-cell">{service.imageUrl ? <img src={service.imageUrl} alt="" /> : <span className="service-image-placeholder"><ImageOff size={17} /></span>}<div><strong>{service.name}</strong><span>{service.description}</span></div></div></td>
+              <td><div className="service-cell">{service.imageUrl ? <img src={service.imageUrl} alt="" onError={(event) => { event.currentTarget.style.display = "none"; event.currentTarget.nextElementSibling.style.display = "flex"; }} /> : null}<span className="service-image-placeholder" style={{ display: service.imageUrl ? "none" : "flex" }}><ImageOff size={17} /></span><div><strong>{service.name}</strong><span>{service.description}</span></div></div></td>
               <td>{service.category}</td><td>{formatPrice(service.price)}</td><td>{service.duration}</td>
               <td><button type="button" className={`active-toggle ${service.isActive === true ? "is-active" : ""}`} onClick={() => handleToggle(service)} aria-pressed={service.isActive === true}><span />{service.isActive === true ? "Active" : "Inactive"}</button></td>
               <td><div className="service-actions"><button type="button" className="table-action" onClick={() => openEditForm(service)} aria-label={`Edit ${service.name}`}><Edit3 size={16} /></button><button type="button" className="table-action table-action--danger" onClick={() => setDeletingService(service)} aria-label={`Delete ${service.name}`}><Trash2 size={16} /></button></div></td>
@@ -139,12 +151,14 @@ function Services() {
 
 function ServiceForm({ form, errors, saving, editing, onChange, onSubmit, onClose }) {
   const field = (name, label, type = "text", extra = {}) => <label className="form-field"><span>{label}</span><input name={name} type={type} value={form[name]} onChange={onChange} min={type === "number" ? "0" : undefined} step={type === "number" ? "0.01" : undefined} {...extra} />{errors[name] && <small>{errors[name]}</small>}</label>;
+  const hasPreview = form.imageUrl && !errors.imageUrl;
   return <div className="modal-backdrop" role="presentation"><section className="service-form-modal" role="dialog" aria-modal="true" aria-labelledby="service-form-title"><div className="modal-heading"><div><p className="eyebrow">Service catalogue</p><h2 id="service-form-title">{editing ? "Edit service" : "Add service"}</h2></div><button type="button" className="modal-close" onClick={onClose} aria-label="Close service form"><X size={18} /></button></div><form onSubmit={onSubmit} noValidate>
     {field("name", "Name")}
     <label className="form-field"><span>Category</span><select name="category" value={form.category} onChange={onChange}><option value="">Select category</option>{categories.map((item) => <option key={item} value={item}>{item}</option>)}</select>{errors.category && <small>{errors.category}</small>}</label>
-    <div className="form-grid">{field("price", "Price", "number", { placeholder: "0.00" })}{field("duration", "Duration", "text", { placeholder: "e.g. 60 min" })}</div>
+    <div className="form-grid">{field("price", "Price", "number", { placeholder: "0.00" })}{field("duration", "Duration (minutes)", "number", { placeholder: "60" })}</div>
     <label className="form-field"><span>Description</span><textarea name="description" value={form.description} onChange={onChange} rows="3" />{errors.description && <small>{errors.description}</small>}</label>
-    {field("imageUrl", "Image URL (optional)", "url", { placeholder: "https://..." })}
+    {field("imageUrl", "Image URL *", "url", { placeholder: "https://..." })}
+    <div className="image-preview" aria-live="polite">{hasPreview ? <img src={form.imageUrl} alt="Service preview" onError={(event) => { event.currentTarget.style.display = "none"; event.currentTarget.nextElementSibling.style.display = "block"; }} /> : null}<span style={{ display: hasPreview ? "none" : "block" }}>{errors.imageUrl || "Enter a valid image URL to preview it."}</span></div>
     <div className="modal-actions"><button type="button" className="button-secondary" onClick={onClose} disabled={saving}>Cancel</button><button type="submit" className="button-primary" disabled={saving}>{saving ? "Saving..." : editing ? "Save changes" : "Add service"}</button></div>
   </form></section></div>;
 }

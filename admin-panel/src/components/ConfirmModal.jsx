@@ -1,6 +1,14 @@
+import { useEffect, useRef } from "react";
 import { AlertTriangle, X } from "lucide-react";
 
 function ConfirmModal({ title, message, confirmLabel = "Delete", onConfirm, onCancel, loading = false }) {
+	const cancelButton = useRef(null);
+	useEffect(() => {
+		cancelButton.current?.focus();
+		const handleKeyDown = (event) => { if (event.key === "Escape" && !loading) onCancel(); };
+		document.addEventListener("keydown", handleKeyDown);
+		return () => document.removeEventListener("keydown", handleKeyDown);
+	}, [loading, onCancel]);
 	return (
 		<div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onCancel()}>
 			<section className="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
@@ -11,7 +19,7 @@ function ConfirmModal({ title, message, confirmLabel = "Delete", onConfirm, onCa
 				<h2 id="confirm-modal-title">{title}</h2>
 				<p>{message}</p>
 				<div className="modal-actions">
-					<button type="button" className="button-secondary" onClick={onCancel} disabled={loading}>Cancel</button>
+					<button ref={cancelButton} type="button" className="button-secondary" onClick={onCancel} disabled={loading}>Cancel</button>
 					<button type="button" className="button-danger" onClick={onConfirm} disabled={loading}>{loading ? "Deleting..." : confirmLabel}</button>
 				</div>
 			</section>

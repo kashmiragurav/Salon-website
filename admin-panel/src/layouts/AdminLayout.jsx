@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import ConfirmModal from "../components/ConfirmModal";
 
 import { logoutAdmin } from "../services/authServices";
 import { useAuth } from "../hooks/useAuth";
@@ -24,12 +25,14 @@ function AdminLayout() {
   const navigate = useNavigate();
   const { admin, loading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const currentTitle = pageTitles[location.pathname] || "Admin";
 
   const handleLogout = async () => {
     try {
       await logoutAdmin();
+      setLogoutOpen(false);
       navigate("/login", { replace: true });
     } catch (error) {
       console.error("Logout failed:", error);
@@ -57,7 +60,7 @@ function AdminLayout() {
         <Sidebar
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
-          onLogout={handleLogout}
+          onLogout={() => setLogoutOpen(true)}
         />
 
         <div className="admin-shell__content">
@@ -74,6 +77,7 @@ function AdminLayout() {
           </main>
         </div>
       </div>
+      {logoutOpen && <ConfirmModal title="Are you sure you want to logout?" message="Your admin session will be cleared on this device." confirmLabel="Logout" onConfirm={handleLogout} onCancel={() => setLogoutOpen(false)} />}
     </div>
   );
 }

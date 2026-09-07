@@ -7,7 +7,7 @@ function Contact({ settings }) {
   const salon = settings.data;
   const [form, setForm] = useState(initialForm);
   const [state, setState] = useState({ loading: false, error: "", sent: false, validation: {} });
-  const update = (event) => setForm({ ...form, [event.target.name]: event.target.value });
+  const update = (event) => { const nextForm = { ...form, [event.target.name]: event.target.value }; setForm(nextForm); setState((current) => ({ ...current, validation: { ...current.validation, [event.target.name]: validateEnquiry(nextForm)[event.target.name] } })); };
   const submit = async (event) => {
     event.preventDefault();
     const validation = validateEnquiry(form);
