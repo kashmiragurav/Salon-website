@@ -1,4 +1,3 @@
 [build]
-  base    = "admin-panel"
-  command = "npm run build"
-  publish = "dist"
+  command = "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix admin-panel && npm run build --prefix admin-panel && mkdir -p _site/admin && cp -r frontend/dist/. _site/ && cp -r admin-panel/dist/. _site/admin/"
+  publish = "_site"
