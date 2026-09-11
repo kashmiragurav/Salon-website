@@ -1,4 +1,14 @@
 [build]
-  base = "frontend"
-  command = "npm run build"
-  publish = "dist"
+  base = ""
+  command = "npm install --prefix frontend && npm install --prefix admin-panel && npm run build --prefix frontend && npm run build --prefix admin-panel && rm -rf frontend/dist/admin && cp -r admin-panel/dist frontend/dist/admin"
+  publish = "frontend/dist"
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
