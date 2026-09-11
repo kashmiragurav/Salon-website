@@ -1,0 +1,140 @@
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { createBooking, validateBooking } from "../services/bookingService";
+import { usePublicCollection } from "../hooks/useSalonData";
+import { ErrorState, LoadingState } from "../components/DataState";
+import { subscribeToActiveServices } from "../services/serviceService";
+import { useClientAuth } from "../hooks/useClientAuth";
+
+const loadServices = () => subscribeToActiveServices;
+
+function BookAppointment() {
+  const services = usePublicCollection(loadServices);
+  const { user } = useClientAuth();
+  const [searchParams] = useSearchParams();
+  const [form, setForm] = useState(() => ({
+    customerName: "",
+    phone: "",
+    gender: "",
+    serviceSelected: "",
+    serviceId: searchParams.get("service") || "",
+    preferredDate: "",
+    preferredTime: "",
+    notes: "",
+  }));
+  const [state, setState] = useState({ loading: false, error: "", sent: false, validation: {} });
+
+  const update = (event) => {
+    const nextForm = { ...form, [event.target.name]: event.target.value };
+    setForm(nextForm);
+    setState((current) => ({ ...current, validation: { ...current.validation, [event.target.name]: validateBooking(nextForm)[event.target.name] } }));
+  };
+
+  const submit = async (event) => {
+    event.preventDefault();
+    if (!user) {
+      setState({ loading: false, error: "Please log in before requesting an appointment.", sent: false, validation: {} });
+      return;
+    }
+    const selectedService = services.data.find((service) => service.id === form.serviceId);
+    const bookingForm = { ...form, serviceSelected: form.serviceSelected || selectedService?.name || "" };
+    const validation = validateBooking(bookingForm);
+    if (Object.keys(validation).length) {
+      setState({ loading: false, error: "Please check the highlighted fields.", sent: false, validation });
+      return;
+    }
+    setState({ loading: true, error: "", sent: false, validation: {} });
+    try {
+      await createBooking(bookingForm);
+      setForm({ customerName: "", phone: "", gender: "", serviceSelected: "", serviceId: "", preferredDate: "", preferredTime: "", notes: "" });
+      setState({ loading: false, error: "", sent: true, validation: {} });
+    } catch (error) {
+      // Log the full error for developer debugging
+      console.error("Booking failed — code:", error?.code, "message:", error?.message, error);
+      const msg = error?.code === "permission-denied"
+        ? "Your booking could not be submitted due to a permissions issue. Please sign out, sign back in, and try again."
+        : error?.code === "unauthenticated"
+          ? "Your session has expired. Please sign in again to complete your appointment request."
+          : error?.code === "unavailable" || error?.code?.includes("network")
+            ? "Unable to connect right now. Please check your internet connection and try again."
+            : error?.message?.includes("sign in")
+              ? "Please sign in before booking an appointment."
+              : "Something went wrong while submitting your booking. Please try again.";
+      setState({ loading: false, error: msg, sent: false, validation: {} });
+    }
+  };
+
+  const field = (name, label, type = "text") => (
+    <label key={name}>
+      {label} *
+      <input
+        required
+        aria-invalid={Boolean(state.validation[name])}
+        aria-describedby={state.validation[name] ? `${name}-error` : undefined}
+        type={type}
+        name={name}
+        value={form[name]}
+        onChange={update}
+        min={type === "date" ? new Date().toISOString().slice(0, 10) : undefined}
+      />
+      {state.validation[name] && <span id={`${name}-error`} className="error-message">{state.validation[name]}</span>}
+    </label>
+  );
+
+  const selectService = (event) => {
+    const selected = services.data.find((service) => service.id === event.target.value);
+    const nextForm = { ...form, serviceId: event.target.value, serviceSelected: selected?.name || "" };
+    setForm(nextForm);
+    setState((current) => ({ ...current, validation: { ...current.validation, serviceSelected: validateBooking(nextForm).serviceSelected } }));
+  };
+
+  return (
+    <section className="section page-intro booking-page">
+      <span className="eyebrow">Appointments</span>
+      <h1>Make time for yourself.</h1>
+      {!user && <p className="lead">Please log in or create a client account before requesting an appointment.</p>}
+      {services.loading && <LoadingState label="Loading available services" />}
+      {services.error && <ErrorState message="We could not load available services. Please try again later." />}
+      {user && !services.loading && !services.error && (
+        <form className="form-panel" onSubmit={submit} noValidate>
+          <p>Choose a service and preferred time. We will contact you to confirm availability.</p>
+          {field("customerName", "Name")}
+          {field("phone", "Phone", "tel")}
+          <label>
+            Gender *
+            <select required aria-invalid={Boolean(state.validation.gender)} name="gender" value={form.gender} onChange={update}>
+              <option value="">Select gender</option>
+              <option value="Female">Female</option>
+              <option value="Male">Male</option>
+              <option value="Non-binary">Non-binary</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+            {state.validation.gender && <span className="error-message">{state.validation.gender}</span>}
+          </label>
+          <label>
+            Service *
+            <select required aria-invalid={Boolean(state.validation.serviceSelected)} name="serviceId" value={form.serviceId} onChange={selectService}>
+              <option value="">Select a service</option>
+              {services.data.map((service) => <option key={service.id} value={service.id}>{service.name}</option>)}
+            </select>
+            {state.validation.serviceSelected && <span className="error-message">{state.validation.serviceSelected}</span>}
+          </label>
+          {field("preferredDate", "Preferred date", "date")}
+          {field("preferredTime", "Preferred time", "time")}
+          <label>
+            Notes
+            <textarea name="notes" rows="4" value={form.notes} onChange={update} />
+            {state.validation.notes && <span className="error-message">{state.validation.notes}</span>}
+          </label>
+          {state.error && <p className="error-message" role="alert">{state.error}</p>}
+          {state.sent && <p className="success-message" role="status">Your appointment request has been submitted successfully. We will be in touch to confirm.</p>}
+          <button className="button" disabled={state.loading || state.sent}>
+            {state.loading ? "Sending..." : "Request appointment"}
+          </button>
+        </form>
+      )}
+    </section>
+  );
+}
+
+export default BookAppointment;
