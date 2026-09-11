@@ -1,4 +1,4 @@
-\gitimport { initializeApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { browserLocalPersistence, getAuth, setPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
