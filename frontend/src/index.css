@@ -2000,16 +2000,29 @@ p.error-message {
   .section-heading .text-link { grid-column: 1; grid-row: auto; justify-self: start; }
   .section-heading h2 { max-width: none; }
 
+  .intro {
+    grid-template-columns: 1fr;
+    gap: var(--sp-5);
+  }
+
+  .lead {
+    max-width: 32ch;
+    font-size: clamp(1.04rem, 2.3vw, 1.2rem);
+  }
+
   .reason-card {
     padding: var(--sp-5) var(--sp-4);
-    text-align: center;
-    align-items: center;
+    text-align: left;
+    align-items: flex-start;
   }
 
   .reason-card h3 { margin-top: var(--sp-4); }
-  .reason-card p { text-align: center; }
+  .reason-card p { text-align: left; }
 
-  .stats { gap: var(--sp-4); }
+  .stats {
+    gap: var(--sp-3);
+    padding-block: var(--sp-6);
+  }
 
   .salon-details {
     flex-direction: column;
@@ -2019,25 +2032,25 @@ p.error-message {
 
   .salon-details > div:first-child {
     width: 100%;
-    text-align: center;
+    text-align: left;
   }
 
   .salon-details h2,
   .salon-details p,
   .salon-details__meta p {
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: left;
   }
 
   .salon-details__meta {
-    justify-items: center;
+    justify-items: start;
     width: 100%;
   }
 
   .salon-details__meta p {
-    justify-content: center;
-    text-align: center;
+    justify-content: flex-start;
+    text-align: left;
   }
 
   .testimonial {
@@ -2080,8 +2093,8 @@ p.error-message {
 
   .reason-card {
     padding: 22px 18px;
-    text-align: center;
-    align-items: center;
+    text-align: left;
+    align-items: flex-start;
   }
 
   .reason-card h3 {
@@ -2093,8 +2106,8 @@ p.error-message {
 
   .stats {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--sp-5);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-4);
     padding-block: var(--sp-6);
     text-align: center;
   }
@@ -2121,18 +2134,20 @@ p.error-message {
   .salon-details {
     padding-top: var(--sp-7);
     padding-bottom: var(--sp-7);
-    text-align: center;
+    text-align: left;
   }
 
   .salon-details h2 {
-    margin: 0 auto var(--sp-3);
+    margin: 0 0 var(--sp-3);
     font-size: clamp(2rem, 8vw, 2.5rem);
+    text-align: left;
   }
 
   .salon-details p {
     max-width: 30ch;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: 0;
+    margin-right: 0;
+    text-align: left;
   }
 
   .salon-details .button {
@@ -2142,12 +2157,12 @@ p.error-message {
 
   .salon-details__meta {
     width: 100%;
-    justify-items: center;
+    justify-items: start;
   }
 
   .salon-details__meta p {
-    justify-content: center;
-    text-align: center;
+    justify-content: flex-start;
+    text-align: left;
   }
 
   .testimonial-grid {
@@ -2180,7 +2195,7 @@ p.error-message {
     grid-template-columns: 1fr;
     gap: var(--sp-6);
     padding: 48px 18px 28px;
-    text-align: center;
+    text-align: left;
   }
 
   .site-footer > div:first-child {
@@ -2188,7 +2203,7 @@ p.error-message {
   }
 
   .site-footer .brand {
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .site-footer p {
@@ -2196,18 +2211,18 @@ p.error-message {
   }
 
   .footer-meta {
-    justify-items: center;
+    justify-items: start;
     gap: var(--sp-3);
   }
 
   .footer-meta span,
   .footer-meta a {
-    justify-content: center;
-    text-align: center;
+    justify-content: flex-start;
+    text-align: left;
   }
 
   .site-footer small {
-    justify-self: center;
+    justify-self: start;
     padding-top: var(--sp-4);
   }
 
