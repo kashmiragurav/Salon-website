@@ -11,6 +11,7 @@ import {
   subscribeToTestimonials,
   updateTestimonial,
 } from "../services/testimonialService";
+import { getStoredFilters, persistFilters } from "../utils/filterPersistence";
 
 const ratings = [1, 2, 3, 4, 5];
 const emptyForm = { clientName: "", rating: "", reviewText: "", photoUrl: "" };
@@ -31,11 +32,13 @@ function Rating({ value, large = false }) {
 }
 
 function Testimonials() {
+  const defaultFilters = { filter: "all", search: "" };
+  const savedFilters = getStoredFilters("testimonials", defaultFilters);
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [filter, setFilter] = useState("all");
-  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState(savedFilters.filter);
+  const [search, setSearch] = useState(savedFilters.search);
   const [formOpen, setFormOpen] = useState(false);
   const [editingTestimonial, setEditingTestimonial] = useState(null);
   const [form, setForm] = useState(emptyForm);
@@ -44,6 +47,10 @@ function Testimonials() {
   const [actionError, setActionError] = useState("");
   const [deletingTestimonial, setDeletingTestimonial] = useState(null);
   const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    persistFilters("testimonials", { filter, search }, defaultFilters);
+  }, [filter, search]);
 
   useEffect(() => {
     const unsubscribe = subscribeToTestimonials(

@@ -5,6 +5,7 @@ import ConfirmModal from "../components/ConfirmModal";
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { BOOKING_STATUSES, subscribeToBookings, updateBookingStatus } from "../services/bookingService";
+import { getStoredFilters, persistFilters } from "../utils/filterPersistence";
 
 const formatDate = (value) => {
   if (!value) return "Not provided";
@@ -16,16 +17,22 @@ const formatDate = (value) => {
 const statusKey = (status) => String(status || "Pending").toLowerCase();
 
 function Appointments() {
+  const defaultFilters = { search: "", statusFilter: "", dateFilter: "" };
+  const savedFilters = getStoredFilters("appointments", defaultFilters);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
+  const [search, setSearch] = useState(savedFilters.search);
+  const [statusFilter, setStatusFilter] = useState(savedFilters.statusFilter);
+  const [dateFilter, setDateFilter] = useState(savedFilters.dateFilter);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [cancellingBooking, setCancellingBooking] = useState(null);
   const [updatingId, setUpdatingId] = useState("");
   const [actionError, setActionError] = useState("");
+
+  useEffect(() => {
+    persistFilters("appointments", { search, statusFilter, dateFilter }, defaultFilters);
+  }, [search, statusFilter, dateFilter]);
 
   useEffect(() => {
     const unsubscribe = subscribeToBookings(

@@ -4,6 +4,7 @@ import { Check, Clock3, Eye, Mail, MessageSquareText, Phone, Search, UserRound, 
 import EmptyState from "../components/EmptyState";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { ENQUIRY_STATUSES, subscribeToEnquiries, updateEnquiryStatus } from "../services/enquiryService";
+import { getStoredFilters, persistFilters } from "../utils/filterPersistence";
 
 const statusKey = (status) => String(status || "NEW").toLowerCase();
 
@@ -15,14 +16,20 @@ const formatDate = (value) => {
 };
 
 function Enquiries() {
+  const defaultFilters = { search: "", statusFilter: "" };
+  const savedFilters = getStoredFilters("enquiries", defaultFilters);
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [search, setSearch] = useState(savedFilters.search);
+  const [statusFilter, setStatusFilter] = useState(savedFilters.statusFilter);
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const [updatingId, setUpdatingId] = useState("");
   const [actionError, setActionError] = useState("");
+
+  useEffect(() => {
+    persistFilters("enquiries", { search, statusFilter }, defaultFilters);
+  }, [search, statusFilter]);
 
   useEffect(() => {
     const unsubscribe = subscribeToEnquiries(

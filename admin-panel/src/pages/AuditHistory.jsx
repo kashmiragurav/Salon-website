@@ -5,6 +5,7 @@ import EmptyState from "../components/EmptyState";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { AUDIT_ACTIONS } from "../services/auditService";
 import { subscribeToAuditLogs } from "../services/auditHistoryService";
+import { getStoredFilters, persistFilters } from "../utils/filterPersistence";
 
 const modules = ["Services", "Gallery", "Testimonials", "Appointments", "Enquiries", "Settings"];
 
@@ -16,13 +17,19 @@ const formatDate = (value) => {
 };
 
 function AuditHistory() {
+  const defaultFilters = { moduleFilter: "", actionFilter: "", dateFilter: "", search: "" };
+  const savedFilters = getStoredFilters("audit-history", defaultFilters);
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [moduleFilter, setModuleFilter] = useState("");
-  const [actionFilter, setActionFilter] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
-  const [search, setSearch] = useState("");
+  const [moduleFilter, setModuleFilter] = useState(savedFilters.moduleFilter);
+  const [actionFilter, setActionFilter] = useState(savedFilters.actionFilter);
+  const [dateFilter, setDateFilter] = useState(savedFilters.dateFilter);
+  const [search, setSearch] = useState(savedFilters.search);
+
+  useEffect(() => {
+    persistFilters("audit-history", { moduleFilter, actionFilter, dateFilter, search }, defaultFilters);
+  }, [moduleFilter, actionFilter, dateFilter, search]);
 
   useEffect(() => {
     const unsubscribe = subscribeToAuditLogs(
