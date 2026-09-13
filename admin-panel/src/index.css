@@ -196,6 +196,7 @@ svg { flex: none; }
   min-width: 0;
   flex: 1;
   flex-direction: column;
+  overflow-x: clip;
 }
 
 /* ==========================================================================
@@ -366,6 +367,7 @@ svg { flex: none; }
   align-items: center;
   gap: var(--sp-4);
   min-width: 0;
+  flex: 1;
 }
 
 .menu-button {
@@ -450,6 +452,7 @@ svg { flex: none; }
 
 .admin-main {
   flex: 1;
+  min-width: 0;
   padding: var(--stack) var(--pad-x) clamp(40px, 6vw, 64px);
 }
 
@@ -606,6 +609,7 @@ svg { flex: none; }
   position: relative;
   z-index: 1;
   max-width: 58ch;
+  padding-right: clamp(80px, 15vw, 120px);
 }
 
 .welcome-icon {
@@ -919,7 +923,7 @@ svg { flex: none; }
   box-shadow: var(--ring);
 }
 
-.content-search { max-width: none; }
+.content-search { max-width: none; border: 1px solid var(--line-strong); border-radius: var(--r-sm); background: var(--canvas); padding: 0 var(--sp-3); margin-bottom: var(--sp-1); }
 
 .search-field input,
 .filter-field select,
@@ -1905,6 +1909,7 @@ svg { flex: none; }
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .booking-detail-copy { margin-top: var(--sp-5); }
@@ -2196,6 +2201,9 @@ svg { flex: none; }
 
   .settings-grid,
   .settings-grid--three { grid-template-columns: 1fr; }
+
+  /* Admin login panel */
+  .admin-login__panel { padding: clamp(22px, 5vw, 36px) clamp(18px, 4vw, 28px); }
 }
 
 /* Phone */
@@ -2210,16 +2218,21 @@ svg { flex: none; }
 
   .admin-main { padding-bottom: var(--sp-8); }
 
-  .dashboard-welcome { padding: var(--sp-6) var(--sp-5); }
+  .dashboard-welcome { padding: var(--sp-5) var(--sp-4); }
   .dashboard-welcome__content { padding-top: var(--sp-7); }
-  .dashboard-refresh { top: var(--sp-4); right: var(--sp-4); }
+  .dashboard-refresh { top: var(--sp-4); right: var(--sp-4); font-size: var(--fs-xs); padding: 7px 10px; }
   .dashboard-welcome::after { right: -90px; bottom: -130px; }
 
-  .dashboard-stats { gap: var(--sp-3); }
+  .dashboard-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-3);
+  }
   .dashboard-stat { padding: var(--sp-4); }
-  .dashboard-stat strong { margin-top: var(--sp-4); }
+  .dashboard-stat strong { margin-top: var(--sp-4); font-size: clamp(1.5rem, 6vw, 2rem); }
+  .dashboard-stat__label { font-size: var(--fs-xs); }
 
   .dashboard-section-heading { padding: var(--sp-4); }
+  .dashboard-section-heading h2 { font-size: var(--fs-xl); }
   .bookings-mobile-hint { display: flex; align-items: center; gap: 6px; }
 
   .gallery-grid { grid-template-columns: 1fr; gap: var(--sp-3); }
@@ -2241,12 +2254,51 @@ svg { flex: none; }
   .review-text,
   .audit-description,
   .enquiry-preview,
-  .service-cell div span { max-width: 220px; }
+  .service-cell div span { max-width: 180px; }
+
+  /* Module heading on phone */
+  .module-heading h1 { font-size: clamp(1.6rem, 6vw, 2.2rem); }
+
+  /* Service toolbar on phone */
+  .service-toolbar { padding: var(--sp-3); gap: var(--sp-3); }
+
+  /* Admin login */
+  .admin-login { padding: var(--sp-5) var(--sp-4); }
+  .admin-login__panel { padding: var(--sp-6) var(--sp-5); }
+  .admin-login__head h1 { font-size: clamp(1.75rem, 7vw, 2.5rem); }
+
+  /* Dashboard welcome */
+  .dashboard-welcome h1 { font-size: clamp(1.75rem, 7vw, 2.5rem); }
+  .welcome-email { font-size: var(--fs-base); }
+  .welcome-copy { font-size: var(--fs-md); }
+
+  /* Topbar heading text */
+  .topbar-heading h2 { font-size: var(--fs-2xl); }
 }
 
 /* ==========================================================================
    ACCESSIBILITY & PRINT
    ========================================================================== */
+
+/* Extra-narrow phones */
+@media (max-width: 360px) {
+  :root { --pad-x: 14px; }
+
+  .admin-topbar__inner { padding-inline: 14px; }
+  .admin-main { padding-inline: 14px; }
+
+  .dashboard-stats { grid-template-columns: 1fr; }
+
+  .admin-login { padding: var(--sp-4) 14px; }
+  .admin-login__panel { padding: var(--sp-5) var(--sp-4); }
+
+  .service-toolbar { padding: var(--sp-3) 14px; }
+
+  .settings-section__heading,
+  .settings-section__body { padding-inline: var(--sp-3); }
+
+  .modal-backdrop { padding: 10px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
