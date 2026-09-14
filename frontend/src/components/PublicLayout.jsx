@@ -1,6 +1,6 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { ArrowUpRight, ExternalLink, MapPin, Phone, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useClientAuth } from "../hooks/useClientAuth";
 
 export default function PublicLayout({ settings }) {
@@ -8,6 +8,15 @@ export default function PublicLayout({ settings }) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleScroll = () => setMenuOpen(false);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [menuOpen]);
 
   const navigation = [
     ["Home", "/"], ["About", "/about"], ["Services", "/services"],
