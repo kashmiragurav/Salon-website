@@ -2208,7 +2208,17 @@ svg { flex: none; }
 
 /* Phone */
 @media (max-width: 640px) {
-  :root { --topbar-h: 64px; }
+  :root {
+    --topbar-h: 64px;
+    -webkit-tap-highlight-color: rgb(176 141 87 / 0.18);
+  }
+
+  /* No 300ms synthetic click delay on touch. */
+  a, button, summary, label { touch-action: manipulation; }
+
+  /* 34px was under the 44px touch minimum. */
+  .password-input button { width: 40px; height: 40px; }
+  .password-input input { padding-right: 50px; }
 
   .admin-topbar__inner { padding: var(--sp-3) var(--pad-x); }
   .topbar-heading { gap: var(--sp-3); }

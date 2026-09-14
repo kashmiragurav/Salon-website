@@ -1931,6 +1931,12 @@ p.error-message {
 
 /* ==========================================================================
    RESPONSIVE
+   Breakpoints: 1180 (laptop) · 1024 (tablet landscape) · 860 (nav collapses)
+   · 640 (phone) · 400 / 360 (narrow phone).
+
+   The phone layout is designed, not shrunk: the header stays a single bar,
+   card grids pair up instead of stacking into an endless column, type steps
+   down with the card it sits in, and every control clears a 44px target.
    ========================================================================== */
 
 /* Laptop — drop the four-across reason row before it gets cramped. */
@@ -1952,6 +1958,12 @@ p.error-message {
   .contact-layout { grid-template-columns: 1fr; }
   .about-layout { gap: var(--sp-8); }
   .about-media { order: -1; }
+
+  /* Stacked, the 4:5 portrait crop becomes a full-height column of photo.
+     A landscape crop keeps the copy in view. */
+  .about-media img,
+  .about-media .image-fallback { min-height: 0; aspect-ratio: 16 / 10; }
+
   .salon-details { align-items: start; flex-direction: column; gap: var(--sp-7); }
   .salon-details__meta { justify-items: start; }
   .salon-details__meta p { text-align: left; }
@@ -1964,49 +1976,143 @@ p.error-message {
   .booking-page .form-panel { max-width: 640px; }
 }
 
-/* Tablet portrait / large phone — the nav collapses to a disclosure panel. */
+/* ==========================================================================
+   Tablet portrait / phone — the nav collapses to a disclosure panel.
+
+   The header becomes a three-column grid: brand · booking CTA · menu toggle.
+   `display: contents` on .header-actions lifts its children into that grid,
+   so the CTA can sit in the bar while the account links drop into the panel
+   underneath — one bar instead of the two rows a flex-wrap gives, and the
+   primary action stays reachable without opening the menu.
+   ========================================================================== */
 @media (max-width: 860px) {
-  .site-header {
-    flex-wrap: wrap;
-    gap: var(--sp-3);
-    padding-block: var(--sp-3);
+  :root {
+    --header-h: 66px;
+    -webkit-tap-highlight-color: rgb(176 141 87 / 0.18);
   }
 
-  /* Row 1: brand + menu toggle. Row 2: account actions, right aligned.
-     Ordering it this way stops the brand from sitting on a row of its own. */
-  .mobile-menu-button { display: grid; order: 1; margin-left: auto; }
+  /* Kill the 300ms synthetic click delay on touch. */
+  a, button, summary, [role="tab"] { touch-action: manipulation; }
 
-  .header-actions { order: 2; margin-left: auto; gap: var(--sp-3); }
-  .header-actions .account-link { font-size: var(--fs-xs); }
+  .site-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-rows: minmax(var(--header-h), auto);
+    align-items: center;
+    align-content: start;
+    column-gap: var(--sp-3);
+    row-gap: 0;
+    padding-block: 0;
+  }
+
+  .header-actions { display: contents; }
+
+  /* The brand is the only flexible column, so a long salon name trims
+     instead of pushing the CTA or the toggle off the bar. */
+  .brand {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .brand > span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .header-actions .button {
+    grid-column: 2;
+    grid-row: 1;
+    min-height: 40px;
+    padding: 9px 14px;
+    font-size: var(--fs-xs);
+  }
+
+  /* The arrow is decoration the bar cannot spare at this width. */
+  .header-actions .button svg { display: none; }
+
+  .mobile-menu-button {
+    display: grid;
+    grid-column: 3;
+    grid-row: 1;
+    width: 44px;
+    height: 44px;
+  }
 
   .site-nav { display: none; }
 
   .site-nav.is-open {
     display: flex;
-    order: 4;
+    grid-column: 1 / -1;
+    align-self: stretch;
     width: 100%;
     flex-direction: column;
     align-items: stretch;
     gap: 0;
     margin: 0;
-    padding-bottom: var(--sp-2);
+    padding-block: var(--sp-1) var(--sp-2);
     border-top: 1px solid var(--line);
     overflow: visible;
     animation: nav-in var(--dur) var(--ease-out) both;
   }
 
   .site-nav.is-open a {
-    padding: 14px 2px;
+    display: flex;
+    align-items: center;
+    min-height: 50px;
+    padding: 12px 2px;
     border-bottom: 1px solid var(--line);
     font-size: var(--fs-base);
+    font-weight: 500;
   }
 
-  .site-nav.is-open a:last-child { border-bottom: 0; }
   .site-nav.is-open a::after { display: none; }
+  .site-nav.is-open a.active { color: var(--gold-700); font-weight: 600; }
+
+  .account-link { grid-column: 1 / -1; }
+
+  /* Without :has() the account links simply stay in the header as full-width
+     rows — taller, but nothing becomes unreachable. */
+  @supports selector(:has(*)) {
+    .account-link { display: none; }
+
+    .site-header:has(.site-nav.is-open) {
+      max-height: 100dvh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding-bottom: var(--sp-4);
+      /* Opaque while open: page content blurring through a menu reads cheap. */
+      background: var(--canvas);
+    }
+
+    .site-header:has(.site-nav.is-open) .account-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      margin-top: var(--sp-3);
+      padding: 10px 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: var(--r-sm);
+      background: var(--surface);
+      font-size: var(--fs-md);
+    }
+  }
 
   .section-heading { grid-template-columns: minmax(0, 1fr); }
   .section-heading .text-link { grid-column: 1; grid-row: auto; justify-self: start; }
   .section-heading h2 { max-width: none; }
+
+  /* On a tablet-width bar a full-bleed account button reads as a banner,
+     not a control — size it to its label instead. */
+  @media (min-width: 641px) {
+    .site-header:has(.site-nav.is-open) .account-link {
+      justify-self: start;
+      min-width: 200px;
+    }
+  }
 
   .intro {
     grid-template-columns: 1fr;
@@ -2061,9 +2167,7 @@ p.error-message {
     text-align: left;
   }
 
-  .testimonial {
-    padding: var(--sp-5) var(--sp-4);
-  }
+  .testimonial { padding: var(--sp-5) var(--sp-4); }
 
   .testimonial p {
     margin-top: var(--sp-3);
@@ -2086,30 +2190,32 @@ p.error-message {
   .auth-page { max-width: 100%; }
 }
 
-/* Phone */
+/* ==========================================================================
+   Phone
+   ========================================================================== */
 @media (max-width: 640px) {
   :root {
-    --section-y: clamp(48px, 11vw, 68px);
-    --grid-gap: 14px;
+    --header-h: 62px;
+    --section-y: clamp(44px, 10vw, 68px);
+    --grid-gap: 12px;
+    /* One gutter token drives every band, so the header, sections, full-bleed
+       stripes and footer all line up on the same optical column. The env()
+       terms only bite in landscape on a notched device. */
+    --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-right));
   }
 
-  .section,
-  .section--soft,
-  .reasons,
-  .stats,
-  .salon-details {
-    padding-inline: 16px;
-  }
+  /* --- Touch targets -------------------------------------------------- */
+  .button { min-height: 48px; padding: 13px 22px; }
+  .button-secondary,
+  .button-danger { min-height: 46px; }
+  .icon-link { width: 44px; height: 44px; }
+  .text-link { min-height: 44px; align-items: center; }
+  .review-note .text-link { min-height: 0; }
 
-  .site-header {
-    min-height: 60px;
-    padding: 10px 16px;
-    gap: 8px;
-  }
-
+  /* --- Header ---------------------------------------------------------- */
   .brand {
     gap: 8px;
-    font-size: clamp(1rem, 4vw, 1.25rem);
+    font-size: clamp(1rem, 4vw, 1.2rem);
   }
 
   .brand-mark {
@@ -2118,181 +2224,299 @@ p.error-message {
     font-size: 1rem;
   }
 
-  .header-actions {
-    gap: 6px;
+  /* --- Hero ------------------------------------------------------------ */
+  .hero { min-height: min(520px, calc(100svh - var(--header-h))); }
+  .hero__content { padding: 52px var(--gutter) 44px; }
+
+  .hero h1,
+  .hero__content h1 {
+    margin: var(--sp-4) auto var(--sp-5);
+    font-size: clamp(2rem, 9vw, 2.75rem);
   }
 
-  .header-actions .account-link {
-    font-size: 0.68rem;
-    padding: 6px 1px;
+  .hero p,
+  .hero__content p {
+    margin-bottom: var(--sp-7);
+    font-size: var(--fs-base);
   }
 
-  .header-actions .button--small {
-    min-height: 34px;
-    padding: 7px 9px;
-    font-size: 0.68rem;
-    white-space: nowrap;
-  }
-
-  /* Hero */
-  .hero { min-height: min(480px, calc(100svh - 60px)); }
-  .hero__content { padding: 44px 16px 36px; }
-  .hero h1, .hero__content h1 { font-size: clamp(2rem, 9vw, 2.75rem); margin-bottom: var(--sp-5); }
-  .hero p, .hero__content p { font-size: var(--fs-base); margin-bottom: var(--sp-6); }
-  .hero__actions { flex-direction: column; align-items: stretch; gap: var(--sp-3); }
+  .hero__actions { flex-direction: column; align-items: stretch; gap: var(--sp-4); }
   .hero__actions .button { width: 100%; justify-content: center; }
-  .hero__secondary-link { align-self: center; }
+  .hero__secondary-link { align-self: center; padding: 10px 4px 6px; }
 
-  /* Grids */
+  /* --- Headings -------------------------------------------------------- */
+  .section-heading { margin-bottom: var(--sp-6); }
+  .section-heading h2 { font-size: clamp(1.6rem, 6.8vw, 2.15rem); }
+  .section-heading .text-link { margin-top: var(--sp-2); }
+  .page-intro > .eyebrow { margin-bottom: var(--sp-3); }
+  .page-intro h1 { margin-bottom: var(--sp-5); font-size: clamp(1.95rem, 8vw, 2.6rem); }
+  .lead { font-size: clamp(1rem, 4.2vw, 1.125rem); }
+
+  /* --- Grids ------------------------------------------------------------
+     Reasons and gallery tiles carry little text each, so a pair per row
+     reads as a considered grid rather than a column that never ends.
+     Service, offer and testimonial cards keep the full width they need. */
   .reason-grid,
+  .gallery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
   .service-grid,
-  .gallery-grid,
   .testimonial-grid,
   .content-cards { grid-template-columns: 1fr; }
 
-  /* Reason cards */
+  /* --- Reason cards ---------------------------------------------------- */
   .reason-card {
     padding: 16px 14px;
+    border-radius: var(--r-md);
     text-align: left;
     align-items: flex-start;
   }
 
+  .reason-card svg { padding: 8px; }
+
   .reason-card h3 {
-    margin: var(--sp-4) 0 var(--sp-2);
-    font-size: clamp(1.2rem, 4.5vw, 1.45rem);
+    margin: 12px 0 6px;
+    font-size: 1.0625rem;
+    line-height: 1.25;
   }
 
-  .reason-card p { font-size: var(--fs-base); }
+  .reason-card p { font-size: 0.8125rem; line-height: 1.55; }
 
-  /* Stats band */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--sp-4);
-    padding-block: var(--sp-6);
-    text-align: center;
-  }
-
-  .stats strong { font-size: clamp(2rem, 9.5vw, 2.75rem); }
-  .stats span { letter-spacing: 0.07em; font-size: 0.68rem; }
-
-  /* Inline stats (About page) */
-  .stats--inline div { padding-inline: 0; border-left: 0; }
-  .stats--inline {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-  .stats--inline div { padding-block: var(--sp-4); border-top: 1px solid var(--line); }
-  .stats--inline div:first-child { padding-top: 0; border-top: 0; }
-
-  /* Service cards */
+  /* --- Service cards --------------------------------------------------- */
   .service-card { border-radius: var(--r-md); }
   .service-card__image { aspect-ratio: 16 / 9; }
-  .service-card__foot { gap: 8px; padding: 12px 14px 14px; }
-  .service-card__foot strong { font-size: 0.95rem; }
+  .service-card > div:first-of-type { padding: var(--sp-5) var(--sp-5) var(--sp-4); }
+  .service-card h3 { font-size: clamp(1.2rem, 5vw, 1.45rem); }
+  .service-card p { font-size: var(--fs-md); }
+  .service-card__foot { gap: 10px; padding: 12px var(--sp-5) 14px; }
+  .service-card__foot strong { font-size: 1.0625rem; }
+  .service-card__foot span { font-size: var(--fs-xs); }
 
-  /* Testimonials */
+  /* --- Gallery --------------------------------------------------------- */
+  .gallery-grid img { aspect-ratio: 1; }
+  .gallery-tile { border-radius: var(--r-md); }
+
+  /* The caption overlay is a hover affordance; on touch the tap already
+     opens the lightbox, so it only ever flashed on the way there. */
+  .gallery-tile button > span { display: none; }
+
+  .gallery-grid figcaption {
+    padding: 10px 12px 12px;
+    font-size: var(--fs-xs);
+    line-height: 1.4;
+  }
+
+  /* --- Content cards (offers, packages, team, before & after) ---------- */
+  .content-card { padding: var(--sp-5); border-radius: var(--r-md); }
+  .content-card h3 { font-size: clamp(1.2rem, 5vw, 1.45rem); }
+  .content-card strong { font-size: var(--fs-lg); }
+
+  /* The full-bleed image has to track the card's padding to stay flush. */
+  .content-card img {
+    width: calc(100% + var(--sp-5) * 2);
+    margin: calc(var(--sp-5) * -1) calc(var(--sp-5) * -1) 0;
+    aspect-ratio: 16 / 10;
+  }
+
+  .content-card--transform > div img { aspect-ratio: 1; }
+
+  /* --- Testimonials ---------------------------------------------------- */
   .testimonial-grid { gap: var(--sp-3); }
-  .testimonial { padding: var(--sp-5) var(--sp-4); }
+  .testimonial { padding: var(--sp-5); border-radius: var(--r-md); }
+  .testimonial svg { width: 18px; height: 18px; }
+
   .testimonial p {
-    margin-top: var(--sp-3);
-    margin-bottom: var(--sp-4);
-    font-size: clamp(1.1rem, 4.5vw, 1.3rem);
+    margin: 10px 0 var(--sp-4);
+    font-size: clamp(1.05rem, 4.4vw, 1.25rem);
     line-height: 1.5;
   }
-  .testimonial strong { padding-top: var(--sp-3); }
 
-  /* Salon details band */
-  .salon-details {
-    padding-top: var(--sp-7);
-    padding-bottom: var(--sp-7);
+  .testimonial strong { padding-top: var(--sp-3); font-size: var(--fs-sm); }
+
+  /* --- Stats band -------------------------------------------------------
+     Three figures never divide evenly into two columns — the third was
+     stranded on a row of its own. One row per figure, value against label,
+     keeps the band compact and deliberate. */
+  .stats {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-block: var(--sp-7);
     text-align: left;
   }
+
+  .stats > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-block: 14px;
+    border-top: 1px solid var(--line-inverse);
+  }
+
+  .stats > div:first-child { padding-top: 0; border-top: 0; }
+  .stats strong { font-size: clamp(1.85rem, 8vw, 2.4rem); }
+
+  .stats span {
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+    text-align: right;
+  }
+
+  /* Inline variant (About) — same rhythm, light hairlines. */
+  .stats--inline { margin-top: var(--sp-8); }
+
+  .stats--inline > div {
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .stats--inline > div:first-child { padding-top: 0; border-top: 0; }
+
+  /* --- Salon details band ---------------------------------------------- */
+  .salon-details { padding-block: var(--sp-7); text-align: left; }
+
   .salon-details h2 {
     margin: 0 0 var(--sp-3);
-    font-size: clamp(1.75rem, 7.5vw, 2.4rem);
+    font-size: clamp(1.7rem, 7vw, 2.3rem);
     text-align: left;
   }
+
   .salon-details p {
     max-width: none;
     margin-left: 0;
     margin-right: 0;
     text-align: left;
   }
+
+  .salon-details a:not(.button) { min-height: 44px; align-items: center; }
   .salon-details .button { width: 100%; justify-content: center; }
-  .salon-details__meta { width: 100%; justify-items: start; }
+  .salon-details__meta { width: 100%; justify-items: stretch; gap: var(--sp-5); }
   .salon-details__meta p { justify-content: flex-start; text-align: left; }
 
-  /* Contact */
+  /* --- FAQ ------------------------------------------------------------- */
+  .faq-list details { padding: var(--sp-4) 0; }
+
+  .faq-list summary {
+    gap: var(--sp-4);
+    min-height: 44px;
+    font-size: clamp(1.02rem, 4.4vw, 1.2rem);
+  }
+
+  .faq-list p { font-size: var(--fs-md); }
+
+  /* --- Category / status tabs -------------------------------------------
+     Bleed the scroller to both edges so a clipped chip signals "swipe me"
+     rather than looking like a broken row. */
+  .appointment-tabs {
+    margin: var(--sp-5) calc(var(--gutter) * -1) var(--sp-6);
+    padding-inline: var(--gutter);
+    scroll-padding-inline: var(--gutter);
+  }
+
+  .appointment-tabs button { min-height: 40px; padding: 9px 16px; }
+
+  /* --- Forms ----------------------------------------------------------- */
+  .form-panel {
+    gap: var(--sp-4);
+    padding: var(--sp-5) var(--sp-4);
+    border-radius: var(--r-md);
+  }
+
+  .form-panel h2,
+  .form-panel h3 { font-size: clamp(1.5rem, 6.5vw, 2rem); }
+
+  /* 1rem exactly — anything smaller and iOS zooms the page on focus. */
+  .form-panel input,
+  .form-panel textarea,
+  .form-panel select {
+    min-height: 50px;
+    font-size: 1rem;
+  }
+
+  .form-panel .button { width: 100%; }
+  .rating-selector button { width: 44px; height: 44px; }
+  .password-input button { width: 42px; height: 42px; }
+  .password-input input { padding-right: 54px; }
+  .review-form { margin-top: var(--sp-7); }
+
+  /* --- Contact --------------------------------------------------------- */
   .contact-details { margin: var(--sp-5) 0; font-size: var(--fs-base); }
+  .contact-details a { min-height: 44px; display: inline-flex; align-items: center; }
   .contact-layout iframe { min-height: 220px; }
 
-  /* About */
+  /* --- About ----------------------------------------------------------- */
   .about-copy h1 { font-size: clamp(1.9rem, 7.5vw, 2.5rem); }
+  .about-copy h2 { margin-top: var(--sp-6); font-size: clamp(1.25rem, 5vw, 1.5rem); }
+
   .about-media img,
-  .about-media .image-fallback { min-height: clamp(240px, 55vw, 380px); }
+  .about-media .image-fallback { min-height: 0; aspect-ratio: 4 / 3; }
 
-  /* FAQ */
-  .faq-list summary { font-size: var(--fs-xl); }
+  /* --- Client appointments --------------------------------------------- */
+  .client-appointment-card { padding: var(--sp-5); border-radius: var(--r-md); }
+  .client-appointment-card h2 { font-size: clamp(1.1rem, 4.6vw, 1.35rem); }
+  .client-appointment-card > div { flex-direction: column; }
+  .client-appointment-card > div > * { width: 100%; justify-content: center; }
 
-  /* Section headings */
-  .section-heading h2 { font-size: clamp(1.6rem, 6.5vw, 2.2rem); }
-
-  /* Page intro headings */
-  .page-intro h1 { font-size: clamp(2rem, 8vw, 2.75rem); }
-
-  /* Booking form */
-  .booking-page .form-panel { padding: var(--sp-5) var(--sp-4); }
-
-  /* Auth pages */
+  /* --- Auth ------------------------------------------------------------ */
   .auth-page { max-width: 100%; }
-  .auth-page .form-panel { padding: var(--sp-5) var(--sp-4); }
 
-  /* Modals */
+  /* --- Modals ---------------------------------------------------------- */
   .booking-detail-grid { grid-template-columns: 1fr; }
   .booking-details-modal { padding: var(--sp-5) var(--sp-4); }
+  .modal-heading h2 { font-size: clamp(1.5rem, 6.5vw, 2rem); }
   .modal-actions { flex-direction: column-reverse; }
   .modal-actions > * { width: 100%; }
 
-  /* Lightbox */
+  /* --- Lightbox -------------------------------------------------------- */
+  .lightbox { padding: 10px; }
+
   .lightbox__panel {
     grid-template-columns: 40px minmax(0, 1fr) 40px;
     padding: 14px 10px;
   }
-  .lightbox__previous,
-  .lightbox__next { width: 36px; height: 36px; }
-  .lightbox__image { max-height: calc(100dvh - 160px); }
 
-  /* Footer */
+  .lightbox__previous,
+  .lightbox__next { width: 40px; height: 40px; }
+  .lightbox__close { width: 40px; height: 40px; top: 10px; right: 10px; }
+  .lightbox__image { max-height: calc(100dvh - 170px); }
+  .lightbox__caption { padding-top: var(--sp-4); font-size: var(--fs-sm); }
+  .lightbox__caption strong { font-size: var(--fs-lg); }
+
+  /* --- Data states ------------------------------------------------------ */
+  .state { min-height: 180px; padding: var(--sp-7) var(--sp-4); }
+
+  /* --- Footer ----------------------------------------------------------- */
   .site-footer {
     grid-template-columns: 1fr;
     gap: var(--sp-6);
-    padding: 44px 16px 28px;
+    padding: 40px var(--gutter) 24px;
     text-align: left;
   }
+
   .site-footer > div:first-child { max-width: none; }
   .site-footer .brand { justify-content: flex-start; }
   .site-footer p { margin-top: var(--sp-4); }
-  .footer-meta { justify-items: start; gap: var(--sp-3); }
+  .footer-meta { justify-items: start; gap: var(--sp-4); }
   .footer-meta span,
   .footer-meta a { justify-content: flex-start; text-align: left; }
+  .footer-meta a { min-height: 40px; align-items: center; }
+  .footer-meta a svg { margin-top: 0; }
   .site-footer small { justify-self: start; padding-top: var(--sp-4); }
 
-  /* Floating actions */
-  .floating-book { padding: 11px 14px; font-size: var(--fs-xs); }
-  .floating-whatsapp { width: 44px; height: 44px; }
+  /* --- Floating actions -------------------------------------------------- */
+  .floating-actions { right: 14px; bottom: max(14px, env(safe-area-inset-bottom)); }
+  .floating-book { padding: 12px 16px; font-size: var(--fs-xs); }
+  .floating-whatsapp { width: 48px; height: 48px; }
+}
 
-  /* Content cards (offers, packages, team) */
-  .content-card { padding: var(--sp-5); }
-  .content-card h3 { font-size: clamp(1.2rem, 4.5vw, 1.45rem); }
-
-  /* Client appointment cards */
-  .client-appointment-card h2 { font-size: clamp(1.1rem, 4.2vw, 1.35rem); }
-  .client-appointment-card > div { flex-direction: column; }
-  .client-appointment-card > div > * { width: 100%; justify-content: center; }
-
-  /* Review form */
-  .review-form { margin-top: var(--sp-7); }
+/* Narrow phones — the header bar is the first thing to run out of room.
+   Every pixel here buys the salon name another character before it trims. */
+@media (max-width: 400px) {
+  .site-header { column-gap: var(--sp-2); }
+  .brand { gap: 6px; font-size: 1rem; }
+  .mobile-menu-button { width: 42px; height: 42px; }
+  .header-actions .button { padding: 9px 11px; font-size: 0.68rem; }
+  .section-heading h2 { font-size: clamp(1.5rem, 6.6vw, 1.95rem); }
 }
 
 /* ==========================================================================
@@ -2301,38 +2525,28 @@ p.error-message {
 
 /* Extra-narrow phones (320px) */
 @media (max-width: 360px) {
-  :root { --gutter: 14px; }
+  :root { --gutter: max(14px, env(safe-area-inset-left), env(safe-area-inset-right)); }
 
-  .section,
-  .section--soft,
-  .reasons,
-  .stats,
-  .salon-details { padding-inline: 14px; }
-
-  .site-header { padding-inline: 14px; }
-
-  .brand { font-size: clamp(0.9rem, 3.8vw, 1.1rem); }
+  .brand { font-size: 0.95rem; }
   .brand-mark { width: 26px; height: 26px; font-size: 0.9rem; }
+  .header-actions .button { padding: 8px 9px; font-size: 0.64rem; }
 
-  .header-actions .button--small {
-    padding: 6px 7px;
-    font-size: 0.62rem;
-  }
-
-  .hero__content { padding: 40px 14px 32px; }
+  .hero__content { padding: 44px var(--gutter) 36px; }
   .hero h1, .hero__content h1 { font-size: clamp(1.75rem, 8.5vw, 2.25rem); }
 
-  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
-  .stats strong { font-size: clamp(1.75rem, 8.5vw, 2.25rem); }
+  .reason-card { padding: 14px 12px; }
+  .reason-card h3 { font-size: 1rem; }
+  .reason-card p { font-size: 0.78rem; }
 
-  .site-footer { padding-inline: 14px; }
+  .stats strong { font-size: 1.75rem; }
+  .stats span { font-size: 0.6rem; letter-spacing: 0.1em; }
 
   .booking-details-modal,
-  .auth-page .form-panel { padding: var(--sp-4) 14px; }
+  .form-panel { padding: var(--sp-4) 14px; }
 
   .lightbox__panel { padding: 10px 8px; }
   .lightbox__previous,
-  .lightbox__next { width: 32px; height: 32px; }
+  .lightbox__next { width: 36px; height: 36px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
