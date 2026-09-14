@@ -780,7 +780,7 @@ svg { flex: none; }
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--sp-8);
   background: var(--ink-900);
   color: #f6f1ea;
@@ -1878,7 +1878,7 @@ p.error-message {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   gap: var(--sp-8);
-  padding: clamp(var(--sp-9), 6vw, 80px) clamp(20px, 4vw, 32px) clamp(var(--sp-7), 3vw, var(--sp-8));
+  padding: clamp(var(--sp-9), 6vw, 80px) clamp(16px, 5vw, 56px) clamp(var(--sp-7), 3vw, var(--sp-8));
   background: var(--ink-900);
   color: #e9e3da;
 }
@@ -2228,7 +2228,7 @@ p.error-message {
   .reason-card p { text-align: left; }
 
   .stats {
-    gap: var(--sp-3);
+    gap: var(--sp-5);
     padding-block: var(--sp-6);
   }
 
@@ -2468,9 +2468,9 @@ p.error-message {
   .testimonial strong { font-size: var(--fs-sm); }
 
   /* --- Stats band -------------------------------------------------------
-     Three figures never divide evenly into two columns — the third was
-     stranded on a row of its own. One row per figure, value against label,
-     keeps the band compact and deliberate. */
+     Stack all 3 cards vertically on phone. Each card shows the number
+     prominently on the left and the label on the right — compact and
+     readable at every width from 320px to 430px. */
   .stats {
     grid-template-columns: 1fr;
     gap: 0;
@@ -2480,20 +2480,26 @@ p.error-message {
 
   .stats > div {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
     gap: var(--sp-4);
-    padding-block: 14px;
+    padding: 18px 0;
     border-top: 1px solid var(--line-inverse);
   }
 
   .stats > div:first-child { padding-top: 0; border-top: 0; }
-  .stats strong { font-size: clamp(1.85rem, 8vw, 2.4rem); }
+
+  .stats strong {
+    font-size: clamp(2rem, 9vw, 2.6rem);
+    line-height: 1;
+    flex: none;
+  }
 
   .stats span {
-    font-size: 0.66rem;
-    letter-spacing: 0.12em;
+    font-size: var(--fs-xs);
+    letter-spacing: 0.1em;
     text-align: right;
+    max-width: 14ch;
   }
 
   /* Inline variant (About) — same rhythm, light hairlines. */
@@ -2627,25 +2633,38 @@ p.error-message {
   /* --- Footer ----------------------------------------------------------- */
   .site-footer {
     grid-template-columns: 1fr;
-    gap: var(--sp-6);
-    padding: 40px clamp(16px, 5vw, 24px) 24px;
+    gap: var(--sp-7);
+    padding: 40px clamp(16px, 5vw, 24px) clamp(24px, 5vw, 32px);
     text-align: left;
   }
 
   .site-footer > div:first-child { max-width: none; }
   .site-footer .brand { justify-content: flex-start; }
-  .site-footer p { margin-top: var(--sp-4); }
-  .footer-meta { justify-items: start; gap: var(--sp-4); }
+  .site-footer p { margin-top: var(--sp-4); line-height: 1.7; }
+  .footer-meta {
+    justify-items: start;
+    gap: var(--sp-4);
+    padding-top: var(--sp-2);
+    border-top: 1px solid var(--line-inverse);
+  }
   .footer-meta span,
   .footer-meta a {
     justify-content: flex-start;
     width: 100%;
     text-align: left;
     overflow-wrap: anywhere;
+    word-break: break-word;
   }
-  .footer-meta a { min-height: 40px; align-items: center; }
-  .footer-meta a svg { margin-top: 0; flex: none; }
-  .site-footer small { justify-self: start; width: 100%; padding-top: var(--sp-4); text-align: center; }
+  .footer-meta a { min-height: 44px; align-items: center; }
+  .footer-meta a svg,
+  .footer-meta span svg { margin-top: 0; flex: none; }
+  .site-footer small {
+    justify-self: stretch;
+    width: 100%;
+    padding-top: var(--sp-5);
+    padding-bottom: 32px;
+    text-align: center;
+  }
 
   /* --- Floating actions -------------------------------------------------- */
   .floating-actions { right: 14px; bottom: max(14px, env(safe-area-inset-bottom)); }
@@ -2682,8 +2701,8 @@ p.error-message {
   .reason-card h3 { font-size: 1rem; }
   .reason-card p { font-size: 0.78rem; }
 
-  .stats strong { font-size: 1.75rem; }
-  .stats span { font-size: 0.6rem; letter-spacing: 0.1em; }
+  .stats strong { font-size: 1.85rem; }
+  .stats span { font-size: var(--fs-2xs); letter-spacing: 0.09em; }
 
   .booking-details-modal,
   .form-panel { padding: var(--sp-4) 14px; }
