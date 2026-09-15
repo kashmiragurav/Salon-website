@@ -1,14 +1,27 @@
 {
-  "buildCommand": "npm install --prefix frontend && npm install --prefix admin-panel && npm run build --prefix frontend && npm run build --prefix admin-panel && rm -rf frontend/dist/admin && mkdir -p frontend/dist/admin && cp -R admin-panel/dist/. frontend/dist/admin/",
-  "outputDirectory": "frontend/dist",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "frontend": {
+      "root": "frontend/",
+      "framework": "vite"
+    },
+    "admin": {
+      "root": "admin-panel/",
+      "framework": "vite"
+    }
+  },
   "rewrites": [
     {
-      "source": "/admin/:path*",
-      "destination": "/admin/:path*"
+      "source": "/admin/(.*)",
+      "destination": {
+        "service": "admin"
+      }
     },
     {
-      "source": "/:path*",
-      "destination": "/index.html"
+      "source": "/(.*)",
+      "destination": {
+        "service": "frontend"
+      }
     }
   ]
 }
